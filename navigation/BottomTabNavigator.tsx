@@ -12,7 +12,8 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
-import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
+import { BottomTabParamList, HomeNavigatorParamList, TabTwoParamList } from '../types';
+import ProfilePicture from '../components/ProfilePicture';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -25,14 +26,14 @@ export default function BottomTabNavigator() {
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint, showLabel: false }}>
       <BottomTab.Screen
         name="Home"
-        component={TabOneNavigator}
+        component={HomeNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <BottomTab.Screen
         name="Search"
-        component={TabOneNavigator}
+        component={HomeNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
@@ -41,14 +42,14 @@ export default function BottomTabNavigator() {
         name="Notifications"
         component={TabTwoNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="notifications" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="notifications-outline" color={color} />,
         }}
       />
       <BottomTab.Screen
         name="Messages"
         component={TabTwoNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="chatbox" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="chatbox-outline" color={color} />,
         }}
       />
       <BottomTab.Screen
@@ -70,15 +71,29 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof Ionicons>['name']
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<TabOneParamList>();
+const TabOneStack = createStackNavigator<HomeNavigatorParamList>();
 
-function TabOneNavigator() {
+function HomeNavigator() {
   return (
     <TabOneStack.Navigator>
       <TabOneStack.Screen
-        name="TabOneScreen"
+        name="HomeScreen"
         component={TabOneScreen}
-        options={{ headerTitle: 'Tab One Title' }}
+        options={{ 
+          headerRightContainerStyle: {
+            marginRight: 15,
+          },
+          headerLeftContainerStyle: {
+            marginLeft: 15
+          },
+          headerTitle: "Home",
+          // headerRight: () => (
+          //     <Ionicons name="notifications-outline" color={Colors.light.tint} size={30} />
+          // ),
+          headerLeft: () => (
+            <ProfilePicture size={40} image={'https://avatars.githubusercontent.com/u/71489065?v=4'} />
+          )
+         }}
       />
     </TabOneStack.Navigator>
   );

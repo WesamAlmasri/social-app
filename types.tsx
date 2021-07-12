@@ -16,8 +16,8 @@ export type BottomTabParamList = {
   Search: undefined;
 };
 
-export type TabOneParamList = {
-  TabOneScreen: undefined;
+export type HomeNavigatorParamList = {
+  HomeScreen: undefined;
 };
 
 export type TabTwoParamList = {
