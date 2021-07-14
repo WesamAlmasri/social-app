@@ -1,5 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
+import styles from './style';
 import PostBody from './PostBody';
 import PostFooter from './PostFooter';
 import PostHeader from './PostHeader';
@@ -11,7 +12,7 @@ export type PostProps = {
 }
 
 const Post = ({ post }: PostProps) => (
-    <View>
+    <View style={styles.container}>
         <PostHeader post={post} />
         <PostBody post={post} />
         <PostFooter post={post} />

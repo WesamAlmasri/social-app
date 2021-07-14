@@ -1,7 +1,7 @@
 const posts = [
   {
     id: '9357e9f9-bfa1-4088-b180-07079a4f475d',
-    text: 'rrrrr',
+    text: 'This is no word to write, so I just try to write anything just to test the app, so I hope you are not reading this.',
     created_at: '2021-06-22T14:50:41.201Z',
     am_like: false,
     category: {
@@ -34,7 +34,7 @@ const posts = [
   },
   {
     id: '51e01ca6-430c-43ba-b0b8-a879d94f67eb',
-    text: 'rrrrr',
+    text: 'This is no word to write, so I just try to write anything just to test the app, so I hope you are not reading this.',
     created_at: '2021-06-22T14:50:40.839Z',
     am_like: true,
     category: {

@@ -3,6 +3,8 @@ import { Text, View } from 'react-native';
 import { PostType } from '../../../types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../../../constants/Colors';
+import styles from './style';
+import moment from 'moment';
 
 import ProfilePicture from '../../ProfilePicture';
 
@@ -11,13 +13,13 @@ export type PostHeaderProps = {
 }
 
 const PostHeader = ({ post }: PostHeaderProps) => (
-    <View>
-        <ProfilePicture size={75} image={post.profile.profile_picture?.link} />
-        <View>
-            <Text>{post.profile.user.username}</Text>
-            <Text>{post.created_at}</Text>
+    <View style={styles.postHeaderContainer}>
+        <ProfilePicture size={50} image={post.profile.profile_picture?.link} />
+        <View style={styles.middle}>
+            <Text style={styles.username}>{post.profile.user.username}</Text>
+            <Text style={styles.createdAt}>{moment(post.created_at).fromNow()}</Text>
         </View>
-        <MaterialCommunityIcons size={30} color={Colors.light.tabIconDefault} name='dots-vertical' />
+        <MaterialCommunityIcons style={styles.threeDotsIcon} size={30} color={Colors.light.tabIconDefault} name='dots-vertical' />
     </View>
 )
 
