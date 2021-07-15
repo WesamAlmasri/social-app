@@ -10,6 +10,7 @@ import { ColorSchemeName } from 'react-native';
 import NewPostScreen from '../screens/NewPostScreen';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
+import SinglePostScreen from '../screens/SinglePostScreen';
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -33,6 +34,7 @@ function RootNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Root" component={BottomTabNavigator} />
       <Stack.Screen name="NewPost" component={NewPostScreen} />
+      <Stack.Screen name="SinglePost" component={SinglePostScreen} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

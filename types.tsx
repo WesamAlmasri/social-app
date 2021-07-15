@@ -6,6 +6,7 @@
 export type RootStackParamList = {
   Root: undefined;
   NewPost: undefined;
+  SinglePost: undefined;
   NotFound: undefined;
 };
 
@@ -44,8 +45,8 @@ export type ProfileType = {
   first_name: string,
   last_name: string,
   caption?: string,
-  profile_picture?: UserFileType,
-  user: UserType,
+  profile_picture?: UserFileType | string,
+  user?: UserType,
 }
 
 export type CategoryType = {
@@ -62,4 +63,12 @@ export type PostType = {
   profile: ProfileType,
   likes?: number,
   images: UserFileType[],
+}
+
+export type CommentType = {
+  id: string,
+  comment: string,
+  created_at: string,
+  post_owner: string,
+  profile: ProfileType,
 }
