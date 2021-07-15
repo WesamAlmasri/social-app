@@ -2,10 +2,14 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from './style';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const NewPostRow = () => {
+
+    const navigation = useNavigation();
+
     const onPress = () => {
-        console.warn('Open new post');
+        navigation.navigate('NewPost');
     }
 
     return (
