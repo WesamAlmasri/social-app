@@ -40,12 +40,12 @@ export type UserFileType = {
   link: string,
 }
 
-export type ProfileType = {
+export type ProfileType<ProfilePictureType> = {
   id: string,
   first_name: string,
   last_name: string,
   caption?: string,
-  profile_picture?: UserFileType | string,
+  profile_picture?: ProfilePictureType,
   user?: UserType,
 }
 
@@ -60,7 +60,7 @@ export type PostType = {
   created_at: string,
   am_like: boolean,
   category: CategoryType,
-  profile: ProfileType,
+  profile: ProfileType<UserFileType>,
   likes?: number,
   images: UserFileType[],
 }
@@ -70,5 +70,5 @@ export type CommentType = {
   comment: string,
   created_at: string,
   post_owner: string,
-  profile: ProfileType,
+  profile: ProfileType<string>,
 }

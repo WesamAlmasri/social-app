@@ -14,7 +14,7 @@ const singlePost = {
     caption: '',
     profile_picture: {
       id: '',
-      link: 'Link to default profile picture',
+      link: 'https://hexagon-sm.s3.eu-central-1.amazonaws.com/male.jpg',
     },
     user: {
       id: 'ea17b401-b3e7-4b12-9d8d-981b8ac4ebfc',
