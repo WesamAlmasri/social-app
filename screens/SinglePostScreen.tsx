@@ -31,6 +31,7 @@ export default function SinglePostScreen() {
         <TouchableOpacity onPress={onCancel} activeOpacity={0.8}>
           <Ionicons color={Colors.light.tabIconSelected} size={30} name='md-chevron-back' />
         </TouchableOpacity>
+        <Text style={styles.headerTitle}>Post</Text>
       </View>
       <FlatList
         ListHeaderComponent={() => <Post post={singlePost} />}
@@ -67,10 +68,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     padding: 10,
-    justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 0.3,
     borderColor: '#d0d0d0',
+  },
+  headerTitle: {
+    fontWeight: 'bold',
+    fontSize: 17,
+    position: 'absolute',
+    left: '50%',
+    transform: [{translateX: -10}]
   },
   commentSection: {
     width: '100%',

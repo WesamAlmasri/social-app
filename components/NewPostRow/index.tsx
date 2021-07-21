@@ -9,7 +9,7 @@ const NewPostRow = () => {
     const navigation = useNavigation();
 
     const onPress = () => {
-        navigation.navigate('NewPost');
+        navigation.navigate('NewPostScreen');
     }
 
     return (

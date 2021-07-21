@@ -14,6 +14,8 @@ import HomeScreen from '../screens/HomeScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import { BottomTabParamList, HomeNavigatorParamList, TabTwoParamList } from '../types';
 import ProfilePicture from '../components/ProfilePicture';
+import NewPostScreen from '../screens/NewPostScreen';
+import SinglePostScreen from '../screens/SinglePostScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -87,12 +89,25 @@ function HomeNavigator() {
             marginLeft: 15
           },
           headerTitle: "Home",
-          // headerRight: () => (
-          //     <Ionicons name="notifications-outline" color={Colors.light.tint} size={30} />
-          // ),
           headerLeft: () => (
             <ProfilePicture size={40} image={'https://avatars.githubusercontent.com/u/71489065?v=4'} />
           )
+         }}
+      />
+      <TabOneStack.Screen
+        name="NewPostScreen"
+        component={NewPostScreen}
+        options={{ 
+          headerShown: false,
+          headerTitle: "New Post",
+         }}
+      />
+      <TabOneStack.Screen
+        name="SinglePostScreen"
+        component={SinglePostScreen}
+        options={{ 
+          headerShown: false,
+          headerTitle: "Post",
          }}
       />
     </TabOneStack.Navigator>

@@ -20,6 +20,8 @@ export type BottomTabParamList = {
 
 export type HomeNavigatorParamList = {
   HomeScreen: undefined;
+  NewPostScreen: undefined;
+  SinglePostScreen: undefined;
 };
 
 export type TabTwoParamList = {

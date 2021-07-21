@@ -15,7 +15,7 @@ const Post = ({ post }: PostProps) => {
     const navigation = useNavigation();
 
     const onPostDetails = () => {
-        navigation.navigate('SinglePost', { postId: post.id });
+        navigation.navigate('SinglePostScreen', { postId: post.id });
     }
 
     return (
