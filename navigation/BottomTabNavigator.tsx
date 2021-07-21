@@ -11,8 +11,8 @@ import * as React from 'react';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import HomeScreen from '../screens/HomeScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
-import { BottomTabParamList, HomeNavigatorParamList, TabTwoParamList } from '../types';
+import ProfileScreen from '../screens/ProfileScreen';
+import { BottomTabParamList, HomeNavigatorParamList, ProfileNavigatorParamList } from '../types';
 import ProfilePicture from '../components/ProfilePicture';
 import NewPostScreen from '../screens/NewPostScreen';
 import SinglePostScreen from '../screens/SinglePostScreen';
@@ -73,12 +73,12 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof Ionicons>['name']
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<HomeNavigatorParamList>();
+const HomeStack = createStackNavigator<HomeNavigatorParamList>();
 
 function HomeNavigator() {
   return (
-    <TabOneStack.Navigator>
-      <TabOneStack.Screen
+    <HomeStack.Navigator>
+      <HomeStack.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{ 
@@ -94,7 +94,7 @@ function HomeNavigator() {
           )
          }}
       />
-      <TabOneStack.Screen
+      <HomeStack.Screen
         name="NewPostScreen"
         component={NewPostScreen}
         options={{ 
@@ -102,7 +102,7 @@ function HomeNavigator() {
           headerTitle: "New Post",
          }}
       />
-      <TabOneStack.Screen
+      <HomeStack.Screen
         name="SinglePostScreen"
         component={SinglePostScreen}
         options={{ 
@@ -110,20 +110,20 @@ function HomeNavigator() {
           headerTitle: "Post",
          }}
       />
-    </TabOneStack.Navigator>
+    </HomeStack.Navigator>
   );
 }
 
-const TabTwoStack = createStackNavigator<TabTwoParamList>();
+const ProfileStack = createStackNavigator<ProfileNavigatorParamList>();
 
 function TabTwoNavigator() {
   return (
-    <TabTwoStack.Navigator>
-      <TabTwoStack.Screen
-        name="TabTwoScreen"
-        component={TabTwoScreen}
-        options={{ headerTitle: 'Tab Two Title' }}
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{ headerTitle: 'Profile' }}
       />
-    </TabTwoStack.Navigator>
+    </ProfileStack.Navigator>
   );
 }

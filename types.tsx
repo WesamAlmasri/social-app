@@ -5,8 +5,7 @@
 
 export type RootStackParamList = {
   Root: undefined;
-  NewPost: undefined;
-  SinglePost: undefined;
+  Profile: undefined;
   NotFound: undefined;
 };
 
@@ -24,8 +23,9 @@ export type HomeNavigatorParamList = {
   SinglePostScreen: undefined;
 };
 
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+export type ProfileNavigatorParamList = {
+  ProfileScreen: undefined;
+  EditProfileScreen: undefined;
 };
 
 export type UserType = {
@@ -49,6 +49,9 @@ export type ProfileType<ProfilePictureType> = {
   caption?: string,
   profile_picture?: ProfilePictureType,
   user?: UserType,
+  followers?: number,
+  followings?: number,
+  am_follow?: boolean,
 }
 
 export type CategoryType = {
