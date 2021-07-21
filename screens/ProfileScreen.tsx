@@ -13,16 +13,24 @@ import posts from '../data/posts';
 export default function ProfileScreen() {
   return (
     <View style={styles.container}>
-      <ProfileHeader profile={meProfile} />
-      <ProfileInfo profile={meProfile} />
-      <ProfileOptions profile={meProfile} />
-      <Feed profile posts={posts} />
+      <Feed Header={ProfileTopPart} posts={posts} />
     </View>
   );
 }
 
+const ProfileTopPart = () => (
+  <>
+    <ProfileHeader profile={meProfile} />
+    <ProfileOptions profile={meProfile} />
+    <ProfileInfo profile={meProfile} />
+  </>
+)
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ececec'
   },
 });

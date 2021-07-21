@@ -1,21 +1,20 @@
 const meProfile = {
-  id: 'sdfkjdsklfj34kr32kl4j32kl4j32k',
-  first_name: 'wesam',
-  last_name: 'almasri',
-  caption: 'Software engineer',
+  id: '2b59961c-6112-4a7e-8bfe-3947f066fb81',
+  first_name: 'wesamalmas',
+  last_name: ' almasri',
+  caption: 'Software Engineer',
   profile_picture: {
-    id: '234j324lj32j5jl232',
+    id: '2432jl43l24n32kljjn3lk',
     link: 'https://hexagon-sm.s3.eu-central-1.amazonaws.com/male.jpg',
   },
   user: {
-    id: '3l2jkh43k2ljh43l24h32lkj',
-    username: 'wesamr1993',
-    email: 'wesam@gmail.com',
-    last_login: '2021-07-15T15:14:37.841Z',
+    id: 'ea17b401-b3e7-4b12-9d8d-981b8ac4ebfc',
+    username: 'wesamalmas',
+    email: 'hexagon0sm@gmail.com',
+    last_login: '2021-07-21T17:53:43.155+00:00',
   },
-  followers: 51,
-  followings: 50,
-  //   am_follow: true,
+  followers: 35,
+  followings: 543,
 };
 
 export default meProfile;

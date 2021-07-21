@@ -1,23 +1,22 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { View, FlatList } from 'react-native';
 import Post from '../Post';
 import styles from './style';
-import NewPostRow from '../NewPostRow';
 import { PostType } from '../../types';
 
 export type FeedProps = {
+  Header: ComponentType | undefined,
   posts: PostType[],
-  profile: boolean,
 }
 
 
-const Feed = ({ posts, profile }: FeedProps) => (
+const Feed = ({ posts, Header }: FeedProps) => (
     <View style={styles.feedContainer}>
         <FlatList
             data={posts}
             renderItem={({ item }) => <Post post={item} />}
             keyExtractor={(item) => item.id}
-            ListHeaderComponent={!profile ? NewPostRow : null}
+            ListHeaderComponent={Header}
         />
     </View>
 )
