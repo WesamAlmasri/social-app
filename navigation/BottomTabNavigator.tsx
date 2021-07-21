@@ -16,6 +16,7 @@ import { BottomTabParamList, HomeNavigatorParamList, ProfileNavigatorParamList }
 import ProfilePicture from '../components/ProfilePicture';
 import NewPostScreen from '../screens/NewPostScreen';
 import SinglePostScreen from '../screens/SinglePostScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -123,6 +124,11 @@ function TabTwoNavigator() {
         name="ProfileScreen"
         component={ProfileScreen}
         options={{ headerTitle: 'Profile' }}
+      />
+      <ProfileStack.Screen
+        name="EditProfileScreen"
+        component={EditProfileScreen}
+        options={{ headerTitle: 'Edit Profile' }}
       />
     </ProfileStack.Navigator>
   );

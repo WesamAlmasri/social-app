@@ -10,6 +10,7 @@ export type ProfileHeaderProps = {
 }
 
 const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
+
     return (
         <View style={styles.container}>
             <ProfilePicture size={75} image={profile.profile_picture?.link} />
@@ -17,7 +18,11 @@ const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
                 <Text style={styles.username}>{profile.user?.username}</Text>
                 <Text style={styles.caption}>{profile.caption}</Text>
                 <View style={styles.onlineStatus}>
-                    <Text style={styles.onlineText}>online</Text>
+                    {profile.user?.last_login && <Text style={styles.onlineText}>
+                        {
+                            (new Date().getTime() - new Date(profile.user?.last_login).getTime()) / 1000 <= 60 ? 'online' : 'offline'
+                        }
+                    </Text>}
                     <FontAwesome color='grey' name='mobile-phone' />
                 </View>
             </View>

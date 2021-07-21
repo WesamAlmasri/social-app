@@ -21,7 +21,7 @@ export default function ProfileScreen() {
 const ProfileTopPart = () => (
   <>
     <ProfileHeader profile={meProfile} />
-    <ProfileOptions profile={meProfile} />
+    <ProfileOptions profile={meProfile} meProfile />
     <ProfileInfo profile={meProfile} />
   </>
 )
