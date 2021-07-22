@@ -13,7 +13,7 @@ import meProfile from '../data/meProfile';
 export default function EditProfileScreen() {
   const navigation = useNavigation();
 
-  const [profilePic, setProfilePic] = useState('');
+  const [profilePic, setProfilePic] = useState(meProfile.profile_picture.link);
   const [profileInfo, setProfileInfo] = useState({
     first_name: meProfile.first_name,
     last_name: meProfile.last_name,
@@ -73,6 +73,11 @@ export default function EditProfileScreen() {
     }
   }
 
+  const onSave = () => {
+    console.warn('saved');
+    navigation.goBack();
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -100,6 +105,9 @@ export default function EditProfileScreen() {
           </TouchableOpacity>
         </View>
       </View>
+      <TouchableOpacity onPress={onSave} activeOpacity={0.6} style={styles.saveBtn}>
+        <Text style={styles.saveText}>Save</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -138,5 +146,15 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'contain',
     marginTop: 10
+  },
+  saveBtn: {
+    alignSelf: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    backgroundColor: '#454dea'
+  },
+  saveText: {
+    color: '#fff'
   }
 });
