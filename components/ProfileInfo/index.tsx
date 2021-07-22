@@ -20,12 +20,12 @@ const ProfileInfo = ({ profile }: ProfileHeaderProps) => {
                 <Text style={styles.profileInfoText}>Email: {profile.user?.email}</Text>
             </View>
             <View style={styles.profileInfoRow}>
-                <MaterialCommunityIcons color='#949494' size={25} name='signal-variant' />
-                <Text style={styles.profileInfoText}>{profile.followers} followers</Text>
-            </View>
-            <View style={styles.profileInfoRow}>
                 <FontAwesome5 color='#949494' size={20} name='user-friends' />
                 <Text style={styles.profileInfoText}>{profile.followings} followings</Text>
+            </View>
+            <View style={styles.profileInfoRow}>
+                <MaterialCommunityIcons color='#949494' size={25} name='signal-variant' />
+                <Text style={styles.profileInfoText}>{profile.followers} followers</Text>
             </View>
         </View>
     )

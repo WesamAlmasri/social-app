@@ -15,7 +15,7 @@ const ProfileOptions = ({ profile, meProfile }: ProfileHeaderProps) => {
     const navigation = useNavigation();
 
     const onPressEdit = () => {
-        navigation.navigate('EditProfileScreen', {profile: meProfile});
+        navigation.navigate('EditProfileScreen', {profile: profile});
     }
 
     const onToggleFollow = () => {
