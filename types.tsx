@@ -28,6 +28,10 @@ export type ProfileNavigatorParamList = {
   EditProfileScreen: undefined;
 };
 
+export type SearchNavigatorParamList = {
+  SearchScreen: undefined;
+};
+
 export type UserType = {
   id: string,
   username: string,

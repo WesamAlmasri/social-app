@@ -12,11 +12,12 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import { BottomTabParamList, HomeNavigatorParamList, ProfileNavigatorParamList } from '../types';
+import { BottomTabParamList, HomeNavigatorParamList, ProfileNavigatorParamList, SearchNavigatorParamList } from '../types';
 import ProfilePicture from '../components/ProfilePicture';
 import NewPostScreen from '../screens/NewPostScreen';
 import SinglePostScreen from '../screens/SinglePostScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import SearchScreen from '../screens/SearchScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -36,28 +37,28 @@ export default function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Search"
-        component={HomeNavigator}
+        component={SearchNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
       />
       <BottomTab.Screen
         name="Notifications"
-        component={TabTwoNavigator}
+        component={ProfileNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="notifications-outline" color={color} />,
         }}
       />
       <BottomTab.Screen
         name="Messages"
-        component={TabTwoNavigator}
+        component={ProfileNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="chatbox-outline" color={color} />,
         }}
       />
       <BottomTab.Screen
         name="Profile"
-        component={TabTwoNavigator}
+        component={ProfileNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="person" color={color} />,
         }}
@@ -117,7 +118,7 @@ function HomeNavigator() {
 
 const ProfileStack = createStackNavigator<ProfileNavigatorParamList>();
 
-function TabTwoNavigator() {
+function ProfileNavigator() {
   return (
     <ProfileStack.Navigator>
       <ProfileStack.Screen
@@ -131,5 +132,19 @@ function TabTwoNavigator() {
         options={{ headerTitle: 'Edit Profile' }}
       />
     </ProfileStack.Navigator>
+  );
+}
+
+const SearchStack = createStackNavigator<SearchNavigatorParamList>();
+
+function SearchNavigator() {
+  return (
+    <SearchStack.Navigator>
+      <SearchStack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{ headerTitle: 'Search' }}
+      />
+    </SearchStack.Navigator>
   );
 }

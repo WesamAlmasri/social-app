@@ -4,7 +4,7 @@ import Feed from '../components/Feed';
 import ProfileHeader from '../components/ProfileHeader';
 import ProfileInfo from '../components/ProfileInfo';
 import ProfileOptions from '../components/ProfileOptions';
-import { View } from '../components/Themed';
+import { View } from 'react-native';
 
 // Dummy Data
 import meProfile from '../data/meProfile';
