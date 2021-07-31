@@ -2,12 +2,30 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    backgroundColor: '#fff',
+    position: 'relative',
+    marginTop: 10
+  },
+  searchIcon: {
+    position: 'absolute',
+    left: '3%',
+    top: '50%',
+  },
+  xIcon: {
+    position: 'absolute',
+    right: '1%',
+    top: '48%'
+  },
+  textInputContainer: {
+    width: '95%',
+    alignSelf: 'center',
+    borderRadius: 13,
+    padding: 10,
+    backgroundColor: '#eaeaea',
   },
   textInput: {
-    width: '80%',
-    backgroundColor: '#eaeaea',
-    padding: 10
+    marginLeft: 22,
+    marginRight: 25
   }
 });
 

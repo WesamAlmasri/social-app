@@ -22,7 +22,7 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ececec'
+    backgroundColor: '#fff'
   },
   resultsContainer: {
       
