@@ -5,7 +5,7 @@
 
 export type RootStackParamList = {
   Root: undefined;
-  Profile: undefined;
+  SingleProfile: undefined;
   NotFound: undefined;
 };
 
@@ -30,6 +30,7 @@ export type ProfileNavigatorParamList = {
 
 export type SearchNavigatorParamList = {
   SearchScreen: undefined;
+  ProfileScreen: undefined;
 };
 
 export type UserType = {

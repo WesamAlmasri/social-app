@@ -11,6 +11,10 @@ export type ProfileHeaderProps = {
 
 const ProfileHeader = ({ profile }: ProfileHeaderProps) => {
 
+    if(!profile){
+        return <Text>Loader</Text>
+    }
+
     return (
         <View style={styles.container}>
             <ProfilePicture size={75} image={profile.profile_picture?.link} />

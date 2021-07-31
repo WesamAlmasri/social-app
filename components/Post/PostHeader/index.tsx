@@ -7,6 +7,7 @@ import styles from './style';
 import moment from 'moment';
 import Feather from '@expo/vector-icons/Feather'
 import ProfilePicture from '../../ProfilePicture';
+import { useNavigation } from '@react-navigation/native';
 
 export type PostHeaderProps = {
     post: PostType
@@ -14,18 +15,25 @@ export type PostHeaderProps = {
 
 const PostHeader = ({ post }: PostHeaderProps) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const navigation = useNavigation();
 
     const onDeletePost = (postId: string) => {
         console.warn('delete post', postId);
     }
 
+    const onPressProfile = () => {
+        navigation.navigate('SingleProfile', {profileId: post.profile.id});
+    }
+
     return (
         <View style={styles.postHeaderContainer}>
-            <ProfilePicture size={50} image={post.profile.profile_picture?.link} />
-            <View style={styles.middle}>
+            <TouchableOpacity onPress={onPressProfile}>
+                <ProfilePicture size={50} image={post.profile.profile_picture?.link} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onPressProfile} style={styles.middle}>
                 <Text style={styles.username}>{post.profile.first_name} {post.profile.last_name}</Text>
                 <Text style={styles.createdAt}>{moment(post.created_at).fromNow()}</Text>
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.6}>
                 <MaterialCommunityIcons style={styles.threeDotsIcon} size={30} color={Colors.light.tabIconDefault} name='dots-vertical' />
             </TouchableOpacity>

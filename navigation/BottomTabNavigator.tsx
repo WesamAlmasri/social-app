@@ -18,6 +18,7 @@ import NewPostScreen from '../screens/NewPostScreen';
 import SinglePostScreen from '../screens/SinglePostScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import SearchScreen from '../screens/SearchScreen';
+import meProfile from '../data/meProfile';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -118,12 +119,13 @@ function HomeNavigator() {
 
 const ProfileStack = createStackNavigator<ProfileNavigatorParamList>();
 
-function ProfileNavigator() {
+export function ProfileNavigator() {
   return (
     <ProfileStack.Navigator>
       <ProfileStack.Screen
         name="ProfileScreen"
-        component={ProfileScreen}
+        // component={() => ProfileScreen({profile: meProfile, meProfile: true})}
+        children={() => ProfileScreen({profileId: meProfile.id})}
         options={{ headerTitle: 'Profile' }}
       />
       <ProfileStack.Screen

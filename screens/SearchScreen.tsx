@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import SearchBar from '../components/SearchBar';
 import SingleProfileRow from '../components/SingleProfileRow';
-import { View, Text } from 'react-native';
+import { View, FlatList } from 'react-native';
 
 // Dummy Data
 import profiles from '../data/profiles';
@@ -12,7 +12,7 @@ export default function SearchScreen() {
     <View style={styles.container}>
       <SearchBar />
       <View style={styles.resultsContainer}>
-        <SingleProfileRow />
+        <FlatList data={profiles} renderItem={({item}) => <SingleProfileRow key={item.id} profile={item} />} />
       </View>
     </View>
   );

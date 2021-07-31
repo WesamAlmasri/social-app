@@ -5,6 +5,7 @@ import { CommentType } from "../../types";
 import ProfilePicture from "../ProfilePicture";
 import moment from 'moment';
 import Feather from '@expo/vector-icons/Feather'
+import { useNavigation } from "@react-navigation/native";
 
 export type CommentProps = {
     comment: CommentType
@@ -12,19 +13,24 @@ export type CommentProps = {
 
 const Comment = ({ comment }: CommentProps) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const navigation = useNavigation();
 
     const onDeleteComment = (commentId: string) => {
         console.warn('delete comment', commentId);
     } 
 
+    const onPressProfile = () => {
+        navigation.navigate('SingleProfile', {profileId: comment.profile.id});
+    }
+
     return (
-        <TouchableOpacity onLongPress={() => setModalVisible(true)} activeOpacity={0.6} style={styles.commentContainer}>
-            <ProfilePicture size={30} image={comment.profile.profile_picture} />
-            <View style={styles.rightPart}>
-                <Text style={styles.username}>{comment.profile.first_name} {comment.profile.last_name}</Text>
-                <Text style={styles.commentText}>{comment.comment}</Text>
-                <Text style={styles.createdAt}>{moment(comment.created_at).fromNow()}</Text>
-            </View>
+        <TouchableOpacity onPress={onPressProfile} onLongPress={() => setModalVisible(true)} activeOpacity={0.6} style={styles.commentContainer}>
+                <ProfilePicture size={30} image={comment.profile.profile_picture} />
+                <View style={styles.rightPart}>
+                    <Text style={styles.username}>{comment.profile.first_name} {comment.profile.last_name}</Text>
+                    <Text style={styles.commentText}>{comment.comment}</Text>
+                    <Text style={styles.createdAt}>{moment(comment.created_at).fromNow()}</Text>
+                </View>                                 
             <Modal
                 animationType="slide"
                 transparent={true}
