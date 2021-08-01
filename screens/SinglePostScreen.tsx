@@ -3,16 +3,21 @@ import { Platform, StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpac
 import Post from '../components/Post';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/core';
-import singlePost from '../data/singlePost';
-import comments from '../data/comments';
 import Comment from '../components/Comment';
 import Colors from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { CommentType, PostType } from '../types';
 
+// Dummy Data
+import singlePost from '../data/singlePost';
+import commentsData from '../data/comments';
+import { useEffect } from 'react';
 
 
 export default function SinglePostScreen() {
   const [commentText, setCommentText] = useState('');
+  const [post, setPost] = useState<PostType | null>(null);
+  const [comments, setComments] = useState<CommentType[] | null>(null);
   const route = useRoute();
   const navigation = useNavigation();
   // console.log('route ', route.params?.postId);
@@ -25,6 +30,15 @@ export default function SinglePostScreen() {
     navigation.goBack();
   }
 
+  useEffect(() => {
+    setPost(singlePost);
+    setComments(commentsData);
+  }, [])
+
+  if(!post){
+    return <Text>Loader</Text>
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -34,7 +48,7 @@ export default function SinglePostScreen() {
         <Text style={styles.headerTitle}>Post</Text>
       </View>
       <FlatList
-        ListHeaderComponent={() => <Post post={singlePost} />}
+        ListHeaderComponent={() => <Post post={post} />}
         data={comments}
         renderItem={({ item }) => <Comment key={item.id} comment={item} />}
         style={styles.commentSection}

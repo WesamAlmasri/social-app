@@ -33,6 +33,10 @@ export type SearchNavigatorParamList = {
   ProfileScreen: undefined;
 };
 
+export type NotificationsNavigatorParamList = {
+  NotificationsScreen: undefined;
+}
+
 export type UserType = {
   id: string,
   username: string,
@@ -81,4 +85,13 @@ export type CommentType = {
   created_at: string,
   post_owner: string,
   profile: ProfileType<string>,
+}
+
+export type NotificationType = {
+  id: string,
+  receiver_id: string,
+  message: string,
+  post_id: string,
+  seen: boolean,
+  created_at: string,
 }
