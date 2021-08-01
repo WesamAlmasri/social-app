@@ -15,11 +15,11 @@ const styles = StyleSheet.create({
   rightSide:{
     marginLeft: 10
   },
-  username: {
+  message: {
     marginBottom: 5,
     color: '#000'
   },
-  caption: {
+  createdAt: {
     color:'#a5a5a5'
   }
 });

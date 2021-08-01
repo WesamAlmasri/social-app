@@ -6,6 +6,7 @@
 export type RootStackParamList = {
   Root: undefined;
   SingleProfile: undefined;
+  SinglePost: undefined;
   NotFound: undefined;
 };
 

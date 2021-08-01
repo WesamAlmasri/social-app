@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import SingleNotificationRow from '../components/SingleNotificationRow';
 
 // Dummy Data
 import notifications from '../data/notifications';
@@ -7,7 +9,7 @@ import notifications from '../data/notifications';
 export default function NotificationsScreen() {
   return (
     <View style={styles.container}>
-        <Text>Notifications Screen</Text>
+        <FlatList data={notifications} renderItem={({item}) => <SingleNotificationRow notification={item} />} />
     </View>
   );
 }
