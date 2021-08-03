@@ -38,6 +38,10 @@ export type NotificationsNavigatorParamList = {
   NotificationsScreen: undefined;
 }
 
+export type MessagesNavigatorParamList = {
+  MessagesScreen: undefined;
+}
+
 export type UserType = {
   id: string,
   username: string,
@@ -62,6 +66,28 @@ export type ProfileType<ProfilePictureType> = {
   followers?: number,
   followings?: number,
   am_follow?: boolean,
+}
+
+export type ProfileWithMessageType<ProfilePictureType> = {
+  id: string,
+  first_name: string,
+  last_name: string,
+  caption?: string,
+  profile_picture?: ProfilePictureType,
+  user?: UserType,
+  followers?: number,
+  followings?: number,
+  am_follow?: boolean,
+  last_message: MessageType,
+}
+
+export type MessageType = {
+  id: string,
+  sender_id: string,
+  receiver_id: string,
+  message: string,
+  seen: boolean,
+  created_at: string,
 }
 
 export type CategoryType = {

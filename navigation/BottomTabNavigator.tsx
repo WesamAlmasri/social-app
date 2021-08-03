@@ -12,7 +12,7 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import { BottomTabParamList, HomeNavigatorParamList, NotificationsNavigatorParamList, ProfileNavigatorParamList, SearchNavigatorParamList } from '../types';
+import { BottomTabParamList, HomeNavigatorParamList, MessagesNavigatorParamList, NotificationsNavigatorParamList, ProfileNavigatorParamList, SearchNavigatorParamList } from '../types';
 import ProfilePicture from '../components/ProfilePicture';
 import NewPostScreen from '../screens/NewPostScreen';
 import SinglePostScreen from '../screens/SinglePostScreen';
@@ -20,6 +20,7 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 import SearchScreen from '../screens/SearchScreen';
 import meProfile from '../data/meProfile';
 import NotificationsScreen from '../screens/NotificationsScreen';
+import MessagesScreen from '../screens/MessagesScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -53,7 +54,7 @@ export default function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Messages"
-        component={ProfileNavigator}
+        component={MessagesNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="chatbox-outline" color={color} />,
         }}
@@ -163,5 +164,19 @@ function NotificationsNavigator() {
         options={{ headerTitle: 'Notifications' }}
       />
     </NotificationsStack.Navigator>
+  );
+}
+
+const MessagesStack = createStackNavigator<MessagesNavigatorParamList>();
+
+function MessagesNavigator() {
+  return (
+    <MessagesStack.Navigator>
+      <MessagesStack.Screen
+        name="MessagesScreen"
+        component={MessagesScreen}
+        options={{ headerTitle: 'Messages' }}
+      />
+    </MessagesStack.Navigator>
   );
 }
