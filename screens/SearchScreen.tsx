@@ -12,7 +12,7 @@ export default function SearchScreen() {
     <View style={styles.container}>
       <SearchBar />
       <View style={styles.resultsContainer}>
-        <FlatList data={profiles} renderItem={({item}) => <SingleProfileRow key={item.id} profile={item} />} />
+        <FlatList data={profiles} renderItem={({ item }) => <SingleProfileRow key={item.id} profile={item} />} />
       </View>
     </View>
   );
@@ -25,6 +25,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   resultsContainer: {
-      
+    flex: 1
   }
 });

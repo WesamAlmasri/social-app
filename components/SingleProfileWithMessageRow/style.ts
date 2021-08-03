@@ -21,6 +21,10 @@ const styles = StyleSheet.create({
   },
   caption: {
     color:'#a5a5a5'
+  },
+  createdAt: {
+    color:'#a5a5a5',
+    marginTop: 3
   }
 });
 
