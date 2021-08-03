@@ -7,6 +7,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
+import ConversationScreen from '../screens/ConversationScreen';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -32,9 +33,10 @@ const Stack = createStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Root" component={BottomTabNavigator} />
+      <Stack.Screen name="Main" component={BottomTabNavigator} />
       <Stack.Screen name="SingleProfile" component={ProfileScreen} />
       <Stack.Screen name="SinglePost" component={SinglePostScreen} />
+      {/* <Stack.Screen name="Conversation" component={ConversationScreen} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

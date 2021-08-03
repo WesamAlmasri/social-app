@@ -21,6 +21,7 @@ import SearchScreen from '../screens/SearchScreen';
 import meProfile from '../data/meProfile';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import MessagesScreen from '../screens/MessagesScreen';
+import ConversationScreen from '../screens/ConversationScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -176,6 +177,11 @@ function MessagesNavigator() {
         name="MessagesScreen"
         component={MessagesScreen}
         options={{ headerTitle: 'Messages' }}
+      />
+      <MessagesStack.Screen
+        name="ConversationScreen"
+        component={ConversationScreen}
+        options={{ headerTitle: 'Chat' }}
       />
     </MessagesStack.Navigator>
   );

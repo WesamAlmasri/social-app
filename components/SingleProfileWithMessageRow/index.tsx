@@ -16,7 +16,7 @@ const SingleProfileWithMessageRow = ({ profileWithMessage }: SingleProfileWithMe
     const navigation = useNavigation();
 
     const onPressConversation = () => {
-        // navigation.navigate('ConversationScreen', {receiverId: profileWithMessage.id});
+        navigation.navigate('ConversationScreen', {receiverId: profileWithMessage.id});
     }
 
     return (

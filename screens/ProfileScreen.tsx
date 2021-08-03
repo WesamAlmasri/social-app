@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.3,
     borderColor: '#d0d0d0',
+    backgroundColor: '#fff'
   },
   headerTitleContainer: {
     position: 'absolute',

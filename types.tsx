@@ -4,9 +4,10 @@
  */
 
 export type RootStackParamList = {
-  Root: undefined;
+  Main: undefined;
   SingleProfile: undefined;
   SinglePost: undefined;
+  Conversation: undefined;
   NotFound: undefined;
 };
 
@@ -40,6 +41,7 @@ export type NotificationsNavigatorParamList = {
 
 export type MessagesNavigatorParamList = {
   MessagesScreen: undefined;
+  ConversationScreen: undefined;
 }
 
 export type UserType = {

@@ -18,6 +18,10 @@ const ProfileOptions = ({ profile, meProfile }: ProfileHeaderProps) => {
         navigation.navigate('EditProfileScreen', {profile: profile});
     }
 
+    const onPressConversation = () => {
+        navigation.navigate('ConversationScreen', {receiverId: profile.id});
+    }
+
     const onToggleFollow = () => {
         setAmFollow(!amFollow);
     }
@@ -32,14 +36,19 @@ const ProfileOptions = ({ profile, meProfile }: ProfileHeaderProps) => {
                         </Text>
                     </TouchableOpacity>
                     :
-
-                    <TouchableOpacity onPress={onToggleFollow} style={{ ...styles.followButton, backgroundColor: amFollow ? '#f1f1f1' : '#2f95dc' }}>
-                        <Text style={{ ...styles.followText, color: amFollow ? '#2f95dc' : '#f1f1f1' }}>
-                            {
-                                amFollow ? 'unFollow' : 'Follow'
-                            }
-                        </Text>
-                    </TouchableOpacity>
+                    <>
+                        <TouchableOpacity onPress={onToggleFollow} style={{ ...styles.followButton, backgroundColor: amFollow ? '#f1f1f1' : '#2f95dc' }}>
+                            <Text style={{ ...styles.followText, color: amFollow ? '#2f95dc' : '#f1f1f1' }}>
+                                {
+                                    amFollow ? 'unFollow' : 'Follow'
+                                }
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={onPressConversation} style={{ ...styles.followButton, backgroundColor: '#2f95dc', marginTop: 5 }}>
+                            <Text style={{ color: '#f1f1f1' }}>Send a message</Text>
+                        </TouchableOpacity>
+                    </>
+                    
 
             }
         </View>
