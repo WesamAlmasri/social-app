@@ -181,7 +181,7 @@ function MessagesNavigator() {
       <MessagesStack.Screen
         name="ConversationScreen"
         component={ConversationScreen}
-        options={{ headerTitle: 'Chat' }}
+        options={{ headerTitle: 'Chat', headerShown: false }}
       />
     </MessagesStack.Navigator>
   );
