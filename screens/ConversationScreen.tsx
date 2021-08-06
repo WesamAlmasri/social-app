@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import ConversationHeader from '../components/ConversationHeader';
+import ConversationInterface from '../components/ConversationInterface';
 import Colors from '../constants/Colors';
 
 // Dummy Data
@@ -29,7 +30,7 @@ export default function ConversationScreen({ receiverId }: ConversationScreenPro
         <Text style={styles.headerTitle}>Back</Text>
         <ConversationHeader profile={profiles[0]} />
       </View>
-      <Text>Conversation Screen</Text>
+      <ConversationInterface conversation={chatConversation} />
     </SafeAreaView>
   );
 }
