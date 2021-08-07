@@ -4,6 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import ConversationHeader from '../components/ConversationHeader';
 import ConversationInterface from '../components/ConversationInterface';
+import SendMessageBar from '../components/SendMessageBar';
 import Colors from '../constants/Colors';
 
 // Dummy Data
@@ -31,6 +32,7 @@ export default function ConversationScreen({ receiverId }: ConversationScreenPro
         <ConversationHeader profile={profiles[0]} />
       </View>
       <ConversationInterface conversation={chatConversation} />
+      <SendMessageBar receiverId={receiverId} />
     </SafeAreaView>
   );
 }
