@@ -4,6 +4,8 @@
  */
 
 export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
   Main: undefined;
   SingleProfile: undefined;
   SinglePost: undefined;

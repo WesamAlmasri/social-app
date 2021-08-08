@@ -7,6 +7,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
+import AuthScreen from '../screens/AuthScreen';
 import ConversationScreen from '../screens/ConversationScreen';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
@@ -33,6 +34,8 @@ const Stack = createStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={AuthScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Main" component={BottomTabNavigator} />
       <Stack.Screen name="SingleProfile" component={ProfileScreen} />
       <Stack.Screen name="SinglePost" component={SinglePostScreen} />
@@ -41,3 +44,7 @@ function RootNavigator() {
     </Stack.Navigator>
   );
 }
+
+const RegisterScreen = () => (
+  <AuthScreen register />
+)
