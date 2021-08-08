@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Dimensions, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, Alert, StyleSheet, TouchableWithoutFeedbackBase } from 'react-native';
+import { View, Dimensions, Keyboard, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, Alert, StyleSheet, TouchableWithoutFeedbackBase } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export type AuthScreenProps = {
@@ -37,9 +37,10 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
 
 
     return (
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-                <Text style={styles.logoText}>H</Text>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 320 : 0} style={styles.container}>
+            {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> */}
                 <View style={styles.inputsContainer}>
+                    <Text style={styles.logoText}>H</Text>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Email"
@@ -67,26 +68,27 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
                         value={loginData.password}
                         onChangeText={(text) => setLoginData(prev => ({ ...prev, password: text }))}
                     />
-                    {register && <TouchableWithoutFeedback style={styles.forgetTextContainer}>
+                    {!register && <TouchableWithoutFeedback style={styles.forgetTextContainer}>
                         <Text style={styles.forgetText}> Forget password?</Text>
                     </TouchableWithoutFeedback>}
                     <TouchableOpacity style={styles.mainBtn} onPress={onSubmit}>
                         <Text style={styles.btnText}> {register ? 'Register' : 'Login'}</Text>
                     </TouchableOpacity>
                     <View style={styles.footerContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate(register ? 'Register' : 'Login')}>
+                        <TouchableOpacity onPress={register ? () => navigation.navigate('Login') : () => navigation.navigate('Register')}>
                             <Text style={styles.footerText}>{register ? 'Login Now' : 'Register now'}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-            </KeyboardAvoidingView>
+            {/* </TouchableWithoutFeedback> */}
+        </KeyboardAvoidingView>
     );
 }
 
-const {width, height} = Dimensions.get('window');
-const logo_size = width*0.3;
-const width_textInput = width*0.8;
-const width_mainBtn = width*0.6
+const { width, height } = Dimensions.get('window');
+const logo_size = width * 0.3;
+const width_textInput = width * 0.8;
+const width_mainBtn = width * 0.6
 
 const styles = StyleSheet.create({
     container: {
@@ -97,11 +99,10 @@ const styles = StyleSheet.create({
     logoText: {
         fontSize: logo_size,
         fontWeight: 'bold',
-        marginTop: '20%',
         color: '#fff',
+        marginVertical: '20%'
     },
     inputsContainer: {
-        marginTop: '20%',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',

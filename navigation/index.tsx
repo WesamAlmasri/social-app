@@ -35,7 +35,7 @@ function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={AuthScreen} />
-      <Stack.Screen name="Register" component={AuthScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Main" component={BottomTabNavigator} />
       <Stack.Screen name="SingleProfile" component={ProfileScreen} />
       <Stack.Screen name="SinglePost" component={SinglePostScreen} />
@@ -44,3 +44,7 @@ function RootNavigator() {
     </Stack.Navigator>
   );
 }
+
+const RegisterScreen = () => (
+  <AuthScreen register />
+)
