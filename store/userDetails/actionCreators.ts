@@ -8,7 +8,7 @@ export const updateUserDetails = (userDetails: UserType) => {
     payload: userDetails,
   };
 
-  return;
+  return getUserDetails(action);
 };
 
 export const getUserDetails = (action: UserDetailsActionType) => {
