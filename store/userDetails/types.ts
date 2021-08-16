@@ -6,7 +6,7 @@ export type UserDetailsStateType = {
 
 export type UserDetailsActionType = {
   type: string;
-  payload: UserType;
+  payload: UserType | null;
 };
 
 export type DispatchType = (args: UserDetailsActionType) => UserDetailsActionType
