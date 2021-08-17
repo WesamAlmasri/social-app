@@ -1,5 +1,9 @@
 const BASE_URL = 'https://hexagon-sm.herokuapp.com/';
 
+// Socket services urls
+export const MESSAGES_SOCKET_URL = 'https://hexagon-sm.herokuapp.com:443/messages';
+export const NOTIFICATIONS_SOCKET_URL = 'https://hexagon-sm.herokuapp.com:443/notifications';
+
 // Auth endpoints
 export const SIGN_IN_GOOGLE_URL = BASE_URL + 'auth/google';
 export const SIGN_IN_URL = BASE_URL + 'auth/signin';
