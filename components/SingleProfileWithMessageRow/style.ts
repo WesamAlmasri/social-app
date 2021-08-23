@@ -1,0 +1,31 @@
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    marginVertical: 5
+  },
+  touchableContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 5
+  },
+  rightSide:{
+    marginLeft: 10
+  },
+  username: {
+    marginBottom: 5,
+    color: '#000'
+  },
+  caption: {
+    color:'#a5a5a5'
+  },
+  createdAt: {
+    color:'#a5a5a5',
+    marginTop: 3
+  }
+});
+
+export default styles;
