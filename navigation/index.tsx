@@ -13,6 +13,7 @@ import ConversationScreen from '../screens/ConversationScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SinglePostScreen from '../screens/SinglePostScreen';
+import VerificationCodeScreen from '../screens/VerificationCodeScreen';
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -34,6 +35,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="VerificationCode" component={VerificationCodeScreen} />
       <Stack.Screen name="Login" component={AuthScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Main" component={BottomTabNavigator} />
