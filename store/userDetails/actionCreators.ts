@@ -1,6 +1,6 @@
 import { UserType } from '../../types';
 import * as actionTypes from './actionTypes';
-import { DispatchType, UserDetailsActionType } from './types';
+import { UserDetailsActionType } from './types';
 
 export const updateUserDetails = (userDetails: UserType) => {
   const action: UserDetailsActionType = {
@@ -8,13 +8,6 @@ export const updateUserDetails = (userDetails: UserType) => {
     payload: userDetails,
   };
 
-  return getUserDetails(action);
+  return action;
 };
 
-export const getUserDetails = (action: UserDetailsActionType) => {
-  return (dispatch: DispatchType) => {
-    // Request api then dispatch the results
-
-    dispatch(action);
-  };
-};
