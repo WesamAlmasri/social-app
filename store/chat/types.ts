@@ -15,7 +15,7 @@ export type ActiveChatUserStateType = {
 
 export type ActiveChatUserActionType = {
   type: string;
-  payload: ProfileType<UserFileType>;
+  payload: ProfileType<UserFileType> | null;
 };
 
 export type DispatchActiveChatType = (
