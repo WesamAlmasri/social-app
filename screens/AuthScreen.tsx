@@ -1,7 +1,10 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import React, { Dispatch, useState, useEffect } from 'react';
 import { View, Dimensions, Keyboard, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, Alert, StyleSheet, TouchableWithoutFeedbackBase } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { storeData, tokenName } from '../helper';
+import { SIGN_IN_URL } from '../urls';
 
 export type AuthScreenProps = {
     register: boolean
@@ -13,12 +16,38 @@ type loginDataType = {
     password: string
 }
 
+
+
+export const loginRequest = async (data: loginDataType, setError: Dispatch<string | null>, setLoading: Dispatch<boolean>, navigation: NavigationProp<any>) => {
+
+    const result = await axios({
+        method: 'post',
+        url: SIGN_IN_URL,
+        headers: { 'Content-Type': 'application/json' },
+        auth: {
+            username: data.email,
+            password: data.password
+        }
+    }).catch(e => setError(e.response.data));
+
+    
+    if(result){
+        console.log('The results is : ', result.data)
+        storeData(tokenName, JSON.stringify(result.data));
+        navigation.navigate('authController');
+    } else {
+        setLoading(false);
+    }
+};
+
 export default function AuthScreen({ register = false }: AuthScreenProps) {
     const [loginData, setLoginData] = useState<loginDataType>({ email: '', username: '', password: '' });
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
 
     const onSubmit = () => {
-        // setLoading(true);
+        setLoading(true);
         if (!loginData.email || !loginData.password) {
             Alert.alert(
                 'Error',
@@ -27,13 +56,28 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
                     text: 'Ok',
                 }]
             );
-            // setLoading(false);
+            setLoading(false);
             return;
         }
 
-        console.warn('login data : ', loginData);
+        setError(null);
+        loginRequest(loginData, setError, setLoading, navigation);
 
     };
+
+
+    useEffect(() => {
+        if(error){
+            Alert.alert(
+                'Error',
+                error,
+                [{
+                    text: 'Ok',
+                    onPress: () => setError(null)
+                }]
+            );
+        }
+    }, [error])
 
 
     return (
@@ -71,8 +115,8 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
                     {!register && <TouchableWithoutFeedback style={styles.forgetTextContainer}>
                         <Text style={styles.forgetText}> Forget password?</Text>
                     </TouchableWithoutFeedback>}
-                    <TouchableOpacity style={styles.mainBtn} onPress={onSubmit}>
-                        <Text style={styles.btnText}> {register ? 'Register' : 'Login'}</Text>
+                    <TouchableOpacity disabled={loading} style={styles.mainBtn} onPress={onSubmit}>
+                        <Text style={styles.btnText}> {loading ? 'Loading...' : register ? 'Register' : 'Login'}</Text>
                     </TouchableOpacity>
                     <View style={styles.footerContainer}>
                         <TouchableOpacity onPress={register ? () => navigation.navigate('Login') : () => navigation.navigate('Register')}>

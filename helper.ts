@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp } from '@react-navigation/native';
 import { DispatchType } from './store/userDetails/types';
 import { UPDATE_USER_DETAILS } from './store/userDetails/actionTypes';
+import { updateUserDetails } from './store/userDetails/actionCreators';
 
 export const tokenName = 'tokenName';
 
@@ -67,7 +68,7 @@ export const logout = async (
     });
   }
   await removeData(tokenName);
-  dispatch({type: UPDATE_USER_DETAILS, payload: null});
+  dispatch(updateUserDetails(null));
   // navigate to login screen
   navigation.navigate('Login');
 };
