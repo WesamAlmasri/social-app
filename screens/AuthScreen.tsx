@@ -4,13 +4,13 @@ import React, { Dispatch, useState, useEffect } from 'react';
 import { View, Dimensions, Keyboard, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, Alert, StyleSheet, TouchableWithoutFeedbackBase } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { storeData, tokenName } from '../helper';
-import { SIGN_IN_URL } from '../urls';
+import { SIGNUP_URL, SIGN_IN_URL } from '../urls';
 
 export type AuthScreenProps = {
     register: boolean
 }
 
-type loginDataType = {
+type requestDataType = {
     email: string,
     username?: string,
     password: string
@@ -18,7 +18,7 @@ type loginDataType = {
 
 
 
-export const loginRequest = async (data: loginDataType, setError: Dispatch<string | null>, setLoading: Dispatch<boolean>, navigation: NavigationProp<any>) => {
+export const loginRequest = async (data: requestDataType, setError: Dispatch<string | null>, setLoading: Dispatch<boolean>, navigation: NavigationProp<any>) => {
 
     const result = await axios({
         method: 'post',
@@ -40,15 +40,39 @@ export const loginRequest = async (data: loginDataType, setError: Dispatch<strin
     }
 };
 
+export const registerRequest = async (data: requestDataType, setError: Dispatch<string | null>, setLoading: Dispatch<boolean>, navigation: NavigationProp<any>) => {
+    const result = await axios({
+        method: 'post',
+        url: SIGNUP_URL,
+        headers: { 'Content-Type': 'application/json' },
+        data: {
+            email: data.email,
+            user_name: data.username,
+            password: data.password
+        }
+    }).catch(e => setError(e.response.data.message));
+
+    
+    if(result){
+        console.log('The results is : ', result.data)
+        await loginRequest({
+            email: data.email.toLocaleLowerCase(),
+            password: data.password
+        }, setError, setLoading, navigation);
+    } else {
+        setLoading(false);
+    }
+};
+
 export default function AuthScreen({ register = false }: AuthScreenProps) {
-    const [loginData, setLoginData] = useState<loginDataType>({ email: '', username: '', password: '' });
+    const [requestData, setRequestData] = useState<requestDataType>({ email: '', username: '', password: '' });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
 
     const onSubmit = () => {
         setLoading(true);
-        if (!loginData.email || !loginData.password) {
+        if (!requestData.email || !requestData.password) {
             Alert.alert(
                 'Error',
                 'The fields must be filled',
@@ -61,7 +85,11 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
         }
 
         setError(null);
-        loginRequest(loginData, setError, setLoading, navigation);
+        if(register){
+            registerRequest(requestData, setError, setLoading, navigation);
+        } else {
+            loginRequest(requestData, setError, setLoading, navigation);
+        }
 
     };
 
@@ -91,8 +119,8 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
                         placeholderTextColor='#b7d4f9'
                         autoCompleteType="email"
                         keyboardType='email-address'
-                        value={loginData.email}
-                        onChangeText={(text) => setLoginData(prev => ({ ...prev, email: text }))}
+                        value={requestData.email}
+                        onChangeText={(text) => setRequestData(prev => ({ ...prev, email: text }))}
                     />
                     {
                         register &&
@@ -100,8 +128,8 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
                             style={styles.textInput}
                             placeholder="username"
                             placeholderTextColor='#b7d4f9'
-                            value={loginData.username}
-                            onChangeText={(text) => setLoginData(prev => ({ ...prev, username: text }))}
+                            value={requestData.username}
+                            onChangeText={(text) => setRequestData(prev => ({ ...prev, username: text }))}
                         />
                     }
                     <TextInput
@@ -109,8 +137,8 @@ export default function AuthScreen({ register = false }: AuthScreenProps) {
                         placeholder="Password"
                         secureTextEntry={true}
                         placeholderTextColor='#b7d4f9'
-                        value={loginData.password}
-                        onChangeText={(text) => setLoginData(prev => ({ ...prev, password: text }))}
+                        value={requestData.password}
+                        onChangeText={(text) => setRequestData(prev => ({ ...prev, password: text }))}
                     />
                     {!register && <TouchableWithoutFeedback style={styles.forgetTextContainer}>
                         <Text style={styles.forgetText}> Forget password?</Text>
