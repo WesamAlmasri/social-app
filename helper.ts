@@ -2,14 +2,12 @@ import Axios, {
   AxiosPromise,
   AxiosRequestConfig,
   CancelToken,
-  CancelTokenSource,
-  Method,
+  CancelTokenSource
 } from 'axios';
 import { ME_URL, REFRESH_URL, LOGOUT_URL } from './urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp } from '@react-navigation/native';
 import { DispatchType } from './store/userDetails/types';
-import { UPDATE_USER_DETAILS } from './store/userDetails/actionTypes';
 import { updateUserDetails } from './store/userDetails/actionCreators';
 
 export const tokenName = 'tokenName';
@@ -74,10 +72,10 @@ export const logout = async (
 };
 
 interface axiosProps {
-  method: Method;
+  method: string;
   url: string;
   token?: string | null;
-  data?: object;
+  data?: object | null;
   extra?: object | null;
   cancelToken?: CancelToken | null;
 }
@@ -86,11 +84,11 @@ export const axiosHandler = ({
   method = 'get',
   url = '',
   token = null,
-  data = {},
+  data = null,
   extra = null,
   cancelToken = null,
 }: axiosProps): AxiosPromise<any> | undefined => {
-  if (data.toString() !== '[object Object]') {
+  if (data?.toString() !== '[object Object]' || ["GET", "POST", "PATCH", "PUT", "DELETE"].includes(method.toUpperCase())) {
     let axiosProps: AxiosRequestConfig = { method, url, data };
 
     if (token) {

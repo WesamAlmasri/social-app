@@ -32,7 +32,6 @@ export const loginRequest = async (data: requestDataType, setError: Dispatch<str
 
     
     if(result){
-        console.log('The results is : ', result.data)
         storeData(tokenName, JSON.stringify(result.data));
         navigation.navigate('authController');
     } else {
@@ -54,7 +53,6 @@ export const registerRequest = async (data: requestDataType, setError: Dispatch<
 
     
     if(result){
-        console.log('The results is : ', result.data)
         await loginRequest({
             email: data.email.toLocaleLowerCase(),
             password: data.password

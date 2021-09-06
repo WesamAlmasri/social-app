@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import axios, { CancelTokenSource } from 'axios';
 import { axiosHandler, getData, logout, storeData, tokenName, tokenType } from '../helper';
 import { ME_URL, REFRESH_URL } from '../urls';
@@ -28,14 +28,14 @@ export const checkAuth = async (setChecking: Dispatch<boolean>, dispatch: Dispat
         cancelToken: source.token
     })?.catch(e => {
         if (axios.isCancel(e)) { isCanceled = true; };
-        if (e.response.data.status === 403 && e.response.data.message === 'Account not verified!') {
+        if (e.response && e.response.data.status === 403 && e.response.data.message === 'Account not verified!') {
             navigation.navigate('VerificationCode');
             return;
         }
     });
 
-
     if (userProfile) {
+        console.log('The result is ', userProfile.data)
         dispatch(updateUserDetails(userProfile.data));
         setChecking(false);
         navigation.navigate('Main');
@@ -48,7 +48,6 @@ export const checkAuth = async (setChecking: Dispatch<boolean>, dispatch: Dispat
             },
             cancelToken: source.token
         })?.catch((e) => { if (axios.isCancel(e)) { isCanceled = true; } });
-
         if (newAccessToken) {
             await storeData(tokenName, JSON.stringify(newAccessToken.data));
             checkAuth(setChecking, dispatch, source, navigation);
