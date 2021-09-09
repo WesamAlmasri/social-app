@@ -62,8 +62,8 @@ export const logout = async (
       method: 'GET',
       url: LOGOUT_URL,
       token: await getToken(dispatch, source, navigation),
-      cancelToken: source.token,
-    });
+      cancelToken: source.token || null,
+    })?.catch(e => null);
   }
   await removeData(tokenName);
   dispatch(updateUserDetails(null));

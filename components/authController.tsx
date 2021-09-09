@@ -13,11 +13,12 @@ import { ActivityIndicator, View } from 'react-native';
 
 export const checkAuth = async (setChecking: Dispatch<boolean>, dispatch: DispatchType, source: CancelTokenSource, navigation: NavigationProp<any>) => {
     const tokenString = await getData(tokenName);
+    let verified: boolean = true;
     if (!tokenString) {
         await logout(dispatch, source, navigation);
         return;
     }
-
+    
     const token: tokenType = JSON.parse(tokenString);
 
     let isCanceled: boolean = false;
@@ -29,17 +30,17 @@ export const checkAuth = async (setChecking: Dispatch<boolean>, dispatch: Dispat
     })?.catch(e => {
         if (axios.isCancel(e)) { isCanceled = true; };
         if (e.response && e.response.data.status === 403 && e.response.data.message === 'Account not verified!') {
+            verified = false;
             navigation.navigate('VerificationCode');
             return;
         }
     });
 
     if (userProfile) {
-        console.log('The result is ', userProfile.data)
         dispatch(updateUserDetails(userProfile.data));
         setChecking(false);
         navigation.navigate('Main');
-    } else {
+    } else if(verified) {
         const newAccessToken = await axiosHandler({
             url: REFRESH_URL,
             method: 'POST',
@@ -47,7 +48,9 @@ export const checkAuth = async (setChecking: Dispatch<boolean>, dispatch: Dispat
                 refresh_token: token.refresh_token
             },
             cancelToken: source.token
-        })?.catch((e) => { if (axios.isCancel(e)) { isCanceled = true; } });
+        })?.catch((e) => { if (axios.isCancel(e)) { 
+            isCanceled = true;
+         } });
         if (newAccessToken) {
             await storeData(tokenName, JSON.stringify(newAccessToken.data));
             checkAuth(setChecking, dispatch, source, navigation);
