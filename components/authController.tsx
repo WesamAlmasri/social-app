@@ -18,8 +18,8 @@ export const checkAuth = async (setChecking: Dispatch<boolean>, dispatch: Dispat
         await logout(dispatch, source, navigation);
         return;
     }
-    
     const token: tokenType = JSON.parse(tokenString);
+    
 
     let isCanceled: boolean = false;
     const userProfile = await axiosHandler({
