@@ -12,7 +12,7 @@ export type VerificationCodeScreenProps = {
 
 export default function VerificationCodeScreen({ }: VerificationCodeScreenProps) {
     const [code, setCode] = useState<string>('');
-    const [loading, setLoading] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
 
@@ -57,6 +57,7 @@ export default function VerificationCodeScreen({ }: VerificationCodeScreenProps)
     };
 
     const codeRequest = async (navigation: NavigationProp<any>) => {
+        setLoading(true);
         const tokenString = await getData(tokenName);
         if (!tokenString) {
             navigation.navigate('Login');
@@ -69,6 +70,7 @@ export default function VerificationCodeScreen({ }: VerificationCodeScreenProps)
             method: 'POST',
             token: token.access_token,
         })?.catch(e => {
+            setLoading(false);
             setError(e.message);
         });
 
@@ -82,6 +84,8 @@ export default function VerificationCodeScreen({ }: VerificationCodeScreenProps)
                 }]
             );
         }
+
+        setLoading(false);
 
     }
 
@@ -117,7 +121,7 @@ export default function VerificationCodeScreen({ }: VerificationCodeScreenProps)
                         onChangeText={setCode}
                     />
                     <TouchableOpacity style={styles.mainBtn} onPress={() => onSubmit(navigation)}>
-                        <Text style={styles.btnText}> Verify</Text>
+                        <Text style={styles.btnText}> { loading ? 'Verify' :  'loading...'}</Text>
                     </TouchableOpacity>
                     <View style={styles.footerContainer}>
                         <TouchableOpacity onPress={() => codeRequest(navigation)}>

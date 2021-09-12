@@ -22,6 +22,8 @@ import meProfile from '../data/meProfile';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import ConversationScreen from '../screens/ConversationScreen';
+import { useSelector } from 'react-redux';
+import { StoreStateType } from '../store/types';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -81,7 +83,14 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof Ionicons>['name']
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
 const HomeStack = createStackNavigator<HomeNavigatorParamList>();
 
+const mapStateToProps = (state: StoreStateType) => ({
+  user: state.user.user,
+});
+
 function HomeNavigator() {
+  const userProfile = useSelector(mapStateToProps);
+
+
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
@@ -96,7 +105,7 @@ function HomeNavigator() {
           },
           headerTitle: "Home",
           headerLeft: () => (
-            <ProfilePicture size={40} image={'https://avatars.githubusercontent.com/u/71489065?v=4'} />
+            <ProfilePicture size={40} image={userProfile.user?.profile_picture?.link} />
           )
          }}
       />
