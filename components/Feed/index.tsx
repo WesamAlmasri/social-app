@@ -24,7 +24,7 @@ const Feed = ({ posts, Header }: FeedProps) => (
                         ListHeaderComponent={Header}
                     />
                     :
-                    <Text>No posts available</Text>
+                    <Text style={styles.noPostText}>No posts available</Text>
         }
 
     </View>

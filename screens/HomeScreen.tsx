@@ -102,14 +102,14 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topBarLinksContainer}>
-        {!categories ? <ActivityIndicator size="large" color="green" /> : <FlatList 
-          data={categories}
+        <FlatList 
+          data={categories || []}
           renderItem={({item}) => <TouchableOpacity style={{...styles.topBarLinksTouchable, borderBottomWidth: currentCat === item.name ? 1 : 0}} onPress={() => onChangeCategory(item.name)}>
             <Text style={styles.topBarText}>{item.name}</Text>
           </TouchableOpacity>}
           keyExtractor={(item) => item.id}
           horizontal={true}
-        />}
+        />
       </View>
       <Feed Header={NewPostRow} posts={posts} />
     </View>

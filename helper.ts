@@ -54,7 +54,7 @@ export const removeData = async (storageKey: string): Promise<void> => {
 // Logout function
 export const logout = async (
   dispatch: DispatchType,
-  source: CancelTokenSource,
+  source: CancelTokenSource | null,
   navigation: NavigationProp<any>
 ) => {
   if (await getData(tokenName)) {
@@ -62,7 +62,7 @@ export const logout = async (
       method: 'GET',
       url: LOGOUT_URL,
       token: await getToken(dispatch, source, navigation),
-      cancelToken: source.token || null,
+      cancelToken: source?.token || null,
     })?.catch(e => null);
   }
   await removeData(tokenName);
@@ -111,7 +111,7 @@ export const axiosHandler = ({
 // Get the token
 export const getToken = async (
   dispatch: DispatchType,
-  source: CancelTokenSource,
+  source: CancelTokenSource | null,
   navigation: NavigationProp<any>
 ): Promise<string | undefined> => {
   const tokenString = await getData(tokenName);
@@ -125,7 +125,7 @@ export const getToken = async (
       method: 'GET',
       url: ME_URL,
       token: token.access_token,
-      cancelToken: source.token,
+      cancelToken: source?.token,
     })?.catch((e) => {
       if (Axios.isCancel(e)) {
         isCanceled = true;
