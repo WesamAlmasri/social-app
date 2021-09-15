@@ -2,14 +2,13 @@ import Axios, {
   AxiosPromise,
   AxiosRequestConfig,
   CancelToken,
-  CancelTokenSource,
-  Method,
+  CancelTokenSource
 } from 'axios';
 import { ME_URL, REFRESH_URL, LOGOUT_URL } from './urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp } from '@react-navigation/native';
 import { DispatchType } from './store/userDetails/types';
-import { UPDATE_USER_DETAILS } from './store/userDetails/actionTypes';
+import { updateUserDetails } from './store/userDetails/actionCreators';
 
 export const tokenName = 'tokenName';
 
@@ -55,7 +54,7 @@ export const removeData = async (storageKey: string): Promise<void> => {
 // Logout function
 export const logout = async (
   dispatch: DispatchType,
-  source: CancelTokenSource,
+  source: CancelTokenSource | null,
   navigation: NavigationProp<any>
 ) => {
   if (await getData(tokenName)) {
@@ -63,20 +62,20 @@ export const logout = async (
       method: 'GET',
       url: LOGOUT_URL,
       token: await getToken(dispatch, source, navigation),
-      cancelToken: source.token,
-    });
+      cancelToken: source?.token || null,
+    })?.catch(e => null);
   }
   await removeData(tokenName);
-  dispatch({type: UPDATE_USER_DETAILS, payload: null});
+  dispatch(updateUserDetails(null));
   // navigate to login screen
   navigation.navigate('Login');
 };
 
 interface axiosProps {
-  method: Method;
+  method: string;
   url: string;
   token?: string | null;
-  data?: object;
+  data?: object | null;
   extra?: object | null;
   cancelToken?: CancelToken | null;
 }
@@ -85,11 +84,11 @@ export const axiosHandler = ({
   method = 'get',
   url = '',
   token = null,
-  data = {},
+  data = null,
   extra = null,
   cancelToken = null,
 }: axiosProps): AxiosPromise<any> | undefined => {
-  if (data.toString() !== '[object Object]') {
+  if (data?.toString() !== '[object Object]' || ["GET", "POST", "PATCH", "PUT", "DELETE"].includes(method.toUpperCase())) {
     let axiosProps: AxiosRequestConfig = { method, url, data };
 
     if (token) {
@@ -112,7 +111,7 @@ export const axiosHandler = ({
 // Get the token
 export const getToken = async (
   dispatch: DispatchType,
-  source: CancelTokenSource,
+  source: CancelTokenSource | null,
   navigation: NavigationProp<any>
 ): Promise<string | undefined> => {
   const tokenString = await getData(tokenName);
@@ -126,7 +125,7 @@ export const getToken = async (
       method: 'GET',
       url: ME_URL,
       token: token.access_token,
-      cancelToken: source.token,
+      cancelToken: source?.token,
     })?.catch((e) => {
       if (Axios.isCancel(e)) {
         isCanceled = true;

@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Dimensions, Keyboard, Text, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, Alert, StyleSheet, TouchableWithoutFeedbackBase } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { NavigationProp } from '@react-navigation/native';
+import { axiosHandler, getData, tokenName, tokenType } from '../helper';
+import { REQUEST_USER_VERIFY_CODE_URL, VERIFY_USER_ACCOUNT_URL } from '../urls';
 
 export type VerificationCodeScreenProps = {
     
@@ -10,9 +12,11 @@ export type VerificationCodeScreenProps = {
 
 export default function VerificationCodeScreen({ }: VerificationCodeScreenProps) {
     const [code, setCode] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
 
-    const onSubmit = () => {
+    const onSubmit = async (navigation: NavigationProp<any>) => {
         // setLoading(true);
         if (!code) {
             Alert.alert(
@@ -26,13 +30,81 @@ export default function VerificationCodeScreen({ }: VerificationCodeScreenProps)
             return;
         }
 
-        console.warn('code : ', code);
+        const tokenString = await getData(tokenName);
+        if (!tokenString) {
+            navigation.navigate('Login');
+            return;
+        }
+        const token: tokenType = JSON.parse(tokenString);
+
+        const response = await axiosHandler({
+            url: VERIFY_USER_ACCOUNT_URL,
+            method: 'POST',
+            data: {
+                code: code
+            },
+            token: token.access_token,
+        })?.catch(e => {
+            setError(e.message);
+        });
+
+        if(response){
+            navigation.navigate('authController');
+        } else {
+            setError('Something went error, try again!');
+        }
 
     };
 
-    const codeRequest = () => {
-        console.warn('send code request')
+    const codeRequest = async (navigation: NavigationProp<any>) => {
+        setLoading(true);
+        const tokenString = await getData(tokenName);
+        if (!tokenString) {
+            navigation.navigate('Login');
+            return;
+        }
+        const token: tokenType = JSON.parse(tokenString);
+
+        const response = await axiosHandler({
+            url: REQUEST_USER_VERIFY_CODE_URL,
+            method: 'POST',
+            token: token.access_token,
+        })?.catch(e => {
+            setLoading(false);
+            setError(e.message);
+        });
+
+        if(response){
+            Alert.alert(
+                'Code sent',
+                'The code has been sent successfully to your email, you can verify it within 10 min',
+                [{
+                    text: 'Ok',
+                    onPress: () => setError(null)
+                }]
+            );
+        }
+
+        setLoading(false);
+
     }
+
+    useEffect(() => {
+        (async() => await codeRequest(navigation))();
+    }, []);
+
+    useEffect(() => {
+        if(error){
+            Alert.alert(
+                'Error',
+                error,
+                [{
+                    text: 'Ok',
+                    onPress: () => setError(null)
+                }]
+            );
+        }
+    }, [error])
 
 
     return (
@@ -48,11 +120,11 @@ export default function VerificationCodeScreen({ }: VerificationCodeScreenProps)
                         value={code}
                         onChangeText={setCode}
                     />
-                    <TouchableOpacity style={styles.mainBtn} onPress={onSubmit}>
-                        <Text style={styles.btnText}> Send the code</Text>
+                    <TouchableOpacity style={styles.mainBtn} onPress={() => onSubmit(navigation)}>
+                        <Text style={styles.btnText}> { loading ? 'Verify' :  'loading...'}</Text>
                     </TouchableOpacity>
                     <View style={styles.footerContainer}>
-                        <TouchableOpacity onPress={codeRequest}>
+                        <TouchableOpacity onPress={() => codeRequest(navigation)}>
                             <Text style={styles.footerText}>Send the code again!</Text>
                         </TouchableOpacity>
                     </View>

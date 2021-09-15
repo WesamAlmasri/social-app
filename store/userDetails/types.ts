@@ -1,12 +1,12 @@
-import { UserType } from '../../types';
+import { ProfileType, UserFileType, UserType } from '../../types';
 
 export type UserDetailsStateType = {
-  user: UserType | null;
+  user: ProfileType<UserFileType> | null;
 };
 
 export type UserDetailsActionType = {
   type: string;
-  payload: UserType | null;
+  payload: ProfileType<UserFileType> | null;
 };
 
 export type DispatchType = (args: UserDetailsActionType) => UserDetailsActionType
