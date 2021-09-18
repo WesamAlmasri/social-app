@@ -1,20 +1,13 @@
 import { UserType } from '../../types';
 import * as actionTypes from './actionTypes';
-import { DispatchType, UserDetailsActionType } from './types';
+import { UserDetailsActionType } from './types';
 
-export const updateUserDetails = (userDetails: UserType) => {
+export const updateUserDetails = (userDetails: UserType | null) => {
   const action: UserDetailsActionType = {
     type: actionTypes.UPDATE_USER_DETAILS,
     payload: userDetails,
   };
 
-  return getUserDetails(action);
+  return action;
 };
 
-export const getUserDetails = (action: UserDetailsActionType) => {
-  return (dispatch: DispatchType) => {
-    // Request api then dispatch the results
-
-    dispatch(action);
-  };
-};

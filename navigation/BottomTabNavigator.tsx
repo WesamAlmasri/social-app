@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
 
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
@@ -22,6 +22,12 @@ import meProfile from '../data/meProfile';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import ConversationScreen from '../screens/ConversationScreen';
+import { useDispatch, useSelector } from 'react-redux';
+import { StoreStateType } from '../store/types';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { logout } from '../helper';
+import { useNavigation } from '@react-navigation/core';
+import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -81,13 +87,29 @@ function TabBarIcon(props: { name: React.ComponentProps<typeof Ionicons>['name']
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
 const HomeStack = createStackNavigator<HomeNavigatorParamList>();
 
+const mapStateToProps = (state: StoreStateType) => ({
+  user: state.user.user,
+});
+
 function HomeNavigator() {
+  const userProfile = useSelector(mapStateToProps);
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false);
+  const navigation = useNavigation();
+
+  const dispatch = useDispatch();
+
+  const onLogout = async () => {
+    await logout(dispatch, null, navigation);
+    setModalVisible(false);
+  }
+
+
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
         name="HomeScreen"
         component={HomeScreen}
-        options={{ 
+        options={{
           headerRightContainerStyle: {
             marginRight: 15,
           },
@@ -96,25 +118,50 @@ function HomeNavigator() {
           },
           headerTitle: "Home",
           headerLeft: () => (
-            <ProfilePicture size={40} image={'https://avatars.githubusercontent.com/u/71489065?v=4'} />
+            <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.6}>
+              <ProfilePicture size={40} image={userProfile.user?.profile_picture?.link} />
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                  Alert.alert('Modal has been closed.');
+                }}>
+                <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setModalVisible(!modalVisible);
+                      }}>
+                      <Feather style={styles.exitBtn} size={25} name='x' />
+                    </TouchableOpacity>
+                    <Text style={styles.confirmText}>Do you want logout?</Text>
+                    <TouchableOpacity onPress={onLogout} style={styles.deleteBtn}>
+                      <Text style={styles.deleteBtnText}>Logout</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+            </TouchableOpacity>
           )
-         }}
+        }}
       />
+
       <HomeStack.Screen
         name="NewPostScreen"
         component={NewPostScreen}
-        options={{ 
+        options={{
           headerShown: false,
           headerTitle: "New Post",
-         }}
+        }}
       />
       <HomeStack.Screen
         name="SinglePostScreen"
         component={SinglePostScreen}
-        options={{ 
+        options={{
           headerShown: false,
           headerTitle: "Post",
-         }}
+        }}
       />
     </HomeStack.Navigator>
   );
@@ -128,7 +175,7 @@ export function ProfileNavigator() {
       <ProfileStack.Screen
         name="ProfileScreen"
         // component={() => ProfileScreen({profile: meProfile, meProfile: true})}
-        children={() => ProfileScreen({profileId: meProfile.id})}
+        children={() => ProfileScreen({ profileId: meProfile.id })}
         options={{ headerTitle: 'Profile' }}
       />
       <ProfileStack.Screen
@@ -186,3 +233,55 @@ function MessagesNavigator() {
     </MessagesStack.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    width: '70%',
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  confirmText: {
+    alignSelf: 'center',
+    marginTop: 10
+  },
+  exitBtn: {
+    alignSelf: 'flex-end'
+  },
+  deleteBtn: {
+    backgroundColor: 'red',
+    alignSelf: 'center',
+    marginTop: 20,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10
+  },
+  deleteBtnText: {
+    color: '#fff'
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 25,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+})

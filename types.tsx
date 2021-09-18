@@ -4,6 +4,7 @@
  */
 
 export type RootStackParamList = {
+  authController: undefined;
   VerificationCode: undefined;
   Login: undefined;
   Register: undefined;
