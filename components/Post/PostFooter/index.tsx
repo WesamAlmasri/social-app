@@ -20,6 +20,10 @@ const PostFooter = ({ post }: PostFooterProps) => {
 
     const navigation = useNavigation();
 
+    const onPostDetails = () => {
+        navigation.navigate('SinglePostScreen', { post: postInfo });
+    }
+
     const onLikePress = async () => {
         const tokenString = await getData(tokenName);
         if (!tokenString) {
@@ -66,7 +70,9 @@ const PostFooter = ({ post }: PostFooterProps) => {
                 <Ionicons size={25} name='heart-outline' color={postInfo.am_like ? Colors.light.tabIconSelected : Colors.light.tabIconDefault} />
                 <Text style={styles.numberOfLikes}>{postInfo.likes}</Text>
             </TouchableOpacity>
-            <MaterialCommunityIcons size={25} name='comment-outline' color={Colors.light.tabIconDefault} />
+            <TouchableOpacity activeOpacity={0.8} onPress={onPostDetails}>
+                <MaterialCommunityIcons size={25} name='comment-outline' color={Colors.light.tabIconDefault} />
+            </TouchableOpacity>
         </View>
     );
 }
