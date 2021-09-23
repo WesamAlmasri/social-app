@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Platform, StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
 import Post from '../components/Post';
 import { useRoute } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/core';
+import { RouteProp, useNavigation } from '@react-navigation/core';
 import Comment from '../components/Comment';
 import Colors from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,15 +12,16 @@ import { CommentType, PostType } from '../types';
 import singlePost from '../data/singlePost';
 import commentsData from '../data/comments';
 import { useEffect } from 'react';
+import { axiosHandler, getData, tokenName, tokenType } from '../helper';
+import { COMMENT_URL } from '../urls';
 
 
 export default function SinglePostScreen() {
   const [commentText, setCommentText] = useState('');
   const [post, setPost] = useState<PostType | null>(null);
   const [comments, setComments] = useState<CommentType[] | null>(null);
-  const route = useRoute();
+  const route: RouteProp<{ params: { post: PostType } }, 'params'> = useRoute();
   const navigation = useNavigation();
-  // console.log('route ', route.params?.postId);
 
   const onSubmitComment = () => {
     console.warn('Pressed', commentText);
@@ -30,9 +31,30 @@ export default function SinglePostScreen() {
     navigation.goBack();
   }
 
+  const getComments = async () => {
+    const tokenString = await getData(tokenName);
+    if (!tokenString) {
+        navigation.navigate('Login');
+        return;
+    }
+    const token: tokenType = JSON.parse(tokenString);
+
+    let url = COMMENT_URL
+
+    const response = await axiosHandler({
+        url: `${COMMENT_URL}/${route.params.post.id}`,
+        method: 'GET',
+        token: token.access_token,
+    })?.catch(e => null);
+
+    if (response) {
+      setComments(response.data.results);
+    }
+}
+
   useEffect(() => {
-    setPost(singlePost);
-    setComments(commentsData);
+    setPost(route.params.post);
+    getComments();
   }, [])
 
   if(!post){
