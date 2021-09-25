@@ -80,7 +80,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     getAllCategories();
-  });
+  }, []);
 
   useEffect(() => {
     getPosts();
@@ -107,7 +107,7 @@ export default function HomeScreen() {
           renderItem={({item}) => <TouchableOpacity style={{...styles.topBarLinksTouchable, borderBottomWidth: currentCat === item.name ? 1 : 0}} onPress={() => onChangeCategory(item.name)}>
             <Text style={styles.topBarText}>{item.name}</Text>
           </TouchableOpacity>}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)} // should change the database id type from number to uuid (string)
           horizontal={true}
         />
       </View>
