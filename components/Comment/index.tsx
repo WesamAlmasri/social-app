@@ -47,9 +47,14 @@ const Comment = ({ comment }: CommentProps) => {
                             <Feather style={styles.exitBtn} size={25} name='x' />
                         </TouchableOpacity>
                         <Text style={styles.confirmText}>Do you want to delete the comment?</Text>
-                        <TouchableOpacity onPress={() => onDeleteComment(comment.id)} style={styles.deleteBtn}>
-                            <Text style={styles.deleteBtnText}>Delete</Text>
-                        </TouchableOpacity>
+                        <View style={styles.btnContainer}>
+                            <TouchableOpacity onPress={() => onDeleteComment(comment.id)} style={styles.deleteBtn}>
+                                <Text style={styles.btnText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
+                                <Text style={styles.btnText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
