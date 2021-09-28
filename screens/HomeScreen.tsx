@@ -20,6 +20,16 @@ export default function HomeScreen() {
 
   const navigation = useNavigation();
 
+  const deletePosts = async(postId: string) => {
+    setPosts((prev) => {
+      if(prev){
+        return prev?.filter(post => post.id !== postId)
+      } else {
+        return null;
+      }
+    });
+  }
+
   const getAllCategories = async() => {
     const tokenString = await getData(tokenName);
     if (!tokenString) {
@@ -111,7 +121,7 @@ export default function HomeScreen() {
           horizontal={true}
         />
       </View>
-      <Feed Header={NewPostRow} posts={posts} />
+      <Feed Header={NewPostRow} posts={posts} deletePosts={deletePosts} />
     </View>
   );
 }
