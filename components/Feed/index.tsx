@@ -3,6 +3,7 @@ import { View, FlatList, ActivityIndicator, Text } from 'react-native';
 import Post from '../Post';
 import styles from './style';
 import { PostType } from '../../types';
+import NewPostRow from '../NewPostRow';
 
 export type FeedProps = {
     Header: ComponentType | undefined,
@@ -25,7 +26,10 @@ const Feed = ({ posts, Header, deletePosts }: FeedProps) => (
                         ListHeaderComponent={Header}
                     />
                     :
-                    <Text style={styles.noPostText}>No posts available</Text>
+                    <>
+                        <NewPostRow />
+                        <Text style={styles.noPostText}>No posts available</Text>
+                    </>
         }
 
     </View>

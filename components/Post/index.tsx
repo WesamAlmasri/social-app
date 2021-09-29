@@ -22,7 +22,7 @@ const Post = ({ post, deletePosts }: PostProps) => {
     return (
 
         <View style={styles.container}>
-            <PostHeader post={post} updatePosts={deletePosts} />
+            <PostHeader post={post} deletePosts={deletePosts} />
             <TouchableOpacity onPress={onPostDetails} activeOpacity={0.8}>
                 <PostBody post={post} />
             </TouchableOpacity>

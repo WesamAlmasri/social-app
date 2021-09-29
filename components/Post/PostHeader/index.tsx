@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, Modal, Alert } from 'react-native';
 import { PostType } from '../../../types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -15,11 +15,12 @@ import { useSelector } from 'react-redux';
 
 export type PostHeaderProps = {
     post: PostType,
-    updatePosts: Function
+    deletePosts: Function
 }
 
-const PostHeader = ({ post, updatePosts }: PostHeaderProps) => {
+const PostHeader = ({ post, deletePosts }: PostHeaderProps) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
     const userProfile = useSelector(mapStateToProps);
 
@@ -35,31 +36,32 @@ const PostHeader = ({ post, updatePosts }: PostHeaderProps) => {
             url: `${POST_URL}/${postId}`,
             method: 'DELETE',
             token: token.access_token,
-        })?.catch(e => null);
+        })?.catch(e => {
+            setError(e.message);
+        });
 
         if (response) {
-            const tokenString = await getData(tokenName);
-            if (!tokenString) {
-                navigation.navigate('Login');
-                return;
-            }
-            const token: tokenType = JSON.parse(tokenString);
-
-            const response = await axiosHandler({
-                url: `${POST_URL}/${postId}`,
-                method: 'DELETE',
-                token: token.access_token,
-            })?.catch(e => null);
-
-            if (response) {
-                updatePosts(postId);
-            }
+            await deletePosts(postId);
         }
+        setModalVisible(false);
     }
 
     const onPressProfile = () => {
         navigation.navigate('SingleProfile', { profileId: post.profile.id });
     }
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert(
+                'Error',
+                error,
+                [{
+                    text: 'Ok',
+                    onPress: () => setError(null)
+                }]
+            );
+        }
+    }, [error])
 
     return (
         <View style={styles.postHeaderContainer}>

@@ -21,13 +21,13 @@ export default function HomeScreen() {
   const navigation = useNavigation();
 
   const deletePosts = async(postId: string) => {
-    setPosts((prev) => {
-      if(prev){
-        return prev?.filter(post => post.id !== postId)
-      } else {
-        return null;
-      }
-    });
+    console.log('delte function called')
+    setPosts(null);
+    let newPostsList: PostType[] | null = posts;
+    if(posts){
+      newPostsList = posts?.filter(post => post.id !== postId);
+    }
+    setPosts(newPostsList);
   }
 
   const getAllCategories = async() => {
@@ -108,7 +108,7 @@ export default function HomeScreen() {
       );
     }
   }, [error]);
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.topBarLinksContainer}>

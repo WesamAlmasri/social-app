@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
       },
       btnContainer: {
         width: '100%',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'center'
       },
       deleteBtn: {
         backgroundColor: 'red',
