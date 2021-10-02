@@ -9,9 +9,10 @@ import { useNavigation } from '@react-navigation/native';
 
 export type PostProps = {
     post: PostType,
+    deletePosts: Function
 }
 
-const Post = ({ post }: PostProps) => {
+const Post = ({ post, deletePosts }: PostProps) => {
     const navigation = useNavigation();
 
     const onPostDetails = () => {
@@ -21,7 +22,7 @@ const Post = ({ post }: PostProps) => {
     return (
 
         <View style={styles.container}>
-            <PostHeader post={post} />
+            <PostHeader post={post} deletePosts={deletePosts} />
             <TouchableOpacity onPress={onPostDetails} activeOpacity={0.8}>
                 <PostBody post={post} />
             </TouchableOpacity>

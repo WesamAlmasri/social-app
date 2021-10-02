@@ -39,8 +39,6 @@ export default function SinglePostScreen() {
     }
     const token: tokenType = JSON.parse(tokenString);
 
-    let url = COMMENT_URL
-
     const response = await axiosHandler({
         url: `${COMMENT_URL}/${route.params.post.id}`,
         method: 'GET',
@@ -70,7 +68,7 @@ export default function SinglePostScreen() {
         <Text style={styles.headerTitle}>Post</Text>
       </View>
       <FlatList
-        ListHeaderComponent={() => <Post post={post} />}
+        ListHeaderComponent={() => <Post post={post} deletePosts={() => null} />}
         data={comments}
         renderItem={({ item }) => <Comment key={item.id} comment={item} />}
         style={styles.commentSection}

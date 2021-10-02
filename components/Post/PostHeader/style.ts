@@ -48,6 +48,11 @@ const styles = StyleSheet.create({
       exitBtn: {
         alignSelf: 'flex-end'
       },
+      btnContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center'
+      },
       deleteBtn: {
         backgroundColor: 'red',
         alignSelf: 'center',
@@ -56,7 +61,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10
       },
-      deleteBtnText: {
+      cancelBtn: {
+        backgroundColor: 'blue',
+        alignSelf: 'center',
+        marginTop: 20,
+        marginLeft: 20,
+        borderRadius: 10,
+        paddingHorizontal: 20,
+        paddingVertical: 10
+      },
+      btnText: {
         color: '#fff'
       },
       textStyle: {

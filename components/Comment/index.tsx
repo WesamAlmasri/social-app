@@ -6,6 +6,8 @@ import ProfilePicture from "../ProfilePicture";
 import moment from 'moment';
 import Feather from '@expo/vector-icons/Feather'
 import { useNavigation } from "@react-navigation/native";
+import { axiosHandler, getData, tokenName, tokenType } from "../../helper";
+import { COMMENT_URL } from "../../urls";
 
 export type CommentProps = {
     comment: CommentType
@@ -15,8 +17,23 @@ const Comment = ({ comment }: CommentProps) => {
     const [modalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
 
-    const onDeleteComment = (commentId: string) => {
-        console.warn('delete comment', commentId);
+    const onDeleteComment = async(commentId: string) => {
+        const tokenString = await getData(tokenName);
+        if (!tokenString) {
+            navigation.navigate('Login');
+            return;
+        }
+        const token: tokenType = JSON.parse(tokenString);
+
+        const response = await axiosHandler({
+            url: `${COMMENT_URL}/${commentId}`,
+            method: 'DELETE',
+            token: token.access_token,
+        })?.catch(e => null);
+
+        if (response) {
+        navigation.navigate('SinglePostScreen', {profileId: comment.profile.id});
+        }
     } 
 
     const onPressProfile = () => {
@@ -47,9 +64,14 @@ const Comment = ({ comment }: CommentProps) => {
                             <Feather style={styles.exitBtn} size={25} name='x' />
                         </TouchableOpacity>
                         <Text style={styles.confirmText}>Do you want to delete the comment?</Text>
-                        <TouchableOpacity onPress={() => onDeleteComment(comment.id)} style={styles.deleteBtn}>
-                            <Text style={styles.deleteBtnText}>Delete</Text>
-                        </TouchableOpacity>
+                        <View style={styles.btnContainer}>
+                            <TouchableOpacity onPress={() => onDeleteComment(comment.id)} style={styles.deleteBtn}>
+                                <Text style={styles.btnText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
+                                <Text style={styles.btnText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
