@@ -11,10 +11,11 @@ import { useNavigation } from '@react-navigation/core';
 import { INTERACTION_URL } from '../../../urls';
 
 export type PostFooterProps = {
-    post: PostType
+    post: PostType,
+    updatePostLikes: Function
 }
 
-const PostFooter = ({ post }: PostFooterProps) => {
+const PostFooter = ({ post, updatePostLikes }: PostFooterProps) => {
     const { userDetails } = useSelector(mapStateToProps);
     const [postInfo, setPostInfo] = useState<PostType>(post);
 
@@ -57,6 +58,7 @@ const PostFooter = ({ post }: PostFooterProps) => {
                 am_like: !prev.am_like,
                 likes: prev.likes ? prev.am_like ? prev.likes - 1 : prev.likes + 1 : undefined
             }));
+            updatePostLikes(post.id);
         }
     }
 

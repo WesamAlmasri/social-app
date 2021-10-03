@@ -8,11 +8,12 @@ import NewPostRow from '../NewPostRow';
 export type FeedProps = {
     Header: ComponentType | undefined,
     posts: PostType[] | null,
-    deletePosts: Function
+    deletePosts: Function,
+    updatePostLikes: Function
 }
 
 
-const Feed = ({ posts, Header, deletePosts }: FeedProps) => (
+const Feed = ({ posts, Header, deletePosts, updatePostLikes }: FeedProps) => (
     <View style={styles.feedContainer}>
         {
             !posts ?
@@ -21,7 +22,7 @@ const Feed = ({ posts, Header, deletePosts }: FeedProps) => (
                 posts?.length !== 0 ?
                     <FlatList
                         data={posts}
-                        renderItem={({ item }) => <Post post={item} deletePosts={deletePosts} />}
+                        renderItem={({ item }) => <Post post={item} deletePosts={deletePosts} updatePostLikes={updatePostLikes} />}
                         keyExtractor={(item) => item.id}
                         ListHeaderComponent={Header}
                     />

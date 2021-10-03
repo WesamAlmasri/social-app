@@ -8,9 +8,6 @@ import Colors from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { CommentType, PostType } from '../types';
 
-// Dummy Data
-import singlePost from '../data/singlePost';
-import commentsData from '../data/comments';
 import { useEffect } from 'react';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { COMMENT_URL } from '../urls';
@@ -20,7 +17,7 @@ export default function SinglePostScreen() {
   const [commentText, setCommentText] = useState('');
   const [post, setPost] = useState<PostType | null>(null);
   const [comments, setComments] = useState<CommentType[] | null>(null);
-  const route: RouteProp<{ params: { post: PostType } }, 'params'> = useRoute();
+  const route: RouteProp<{ params: { post: PostType/*, deletePosts: Function, updatePostLikes: Function*/ } }, 'params'> = useRoute();
   const navigation = useNavigation();
 
   const onSubmitComment = () => {
@@ -68,7 +65,7 @@ export default function SinglePostScreen() {
         <Text style={styles.headerTitle}>Post</Text>
       </View>
       <FlatList
-        ListHeaderComponent={() => <Post post={post} deletePosts={() => null} />}
+        ListHeaderComponent={() => <Post post={post} deletePosts={() => null} updatePostLikes={() => null} />} // need to be fixed
         data={comments}
         renderItem={({ item }) => <Comment key={item.id} comment={item} />}
         style={styles.commentSection}
