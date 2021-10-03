@@ -10,10 +10,11 @@ import { axiosHandler, getData, tokenName, tokenType } from "../../helper";
 import { COMMENT_URL } from "../../urls";
 
 export type CommentProps = {
-    comment: CommentType
+    comment: CommentType,
+    onChangeComments: Function
 }
 
-const Comment = ({ comment }: CommentProps) => {
+const Comment = ({ comment, onChangeComments }: CommentProps) => {
     const [modalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
 
@@ -32,6 +33,7 @@ const Comment = ({ comment }: CommentProps) => {
         })?.catch(e => null);
 
         if (response) {
+        onChangeComments('delete', comment);
         navigation.navigate('SinglePostScreen', {profileId: comment.profile.id});
         }
     } 
