@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { Platform, StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
 import Post from '../components/Post';
 import { useRoute } from '@react-navigation/native';
 import { RouteProp, useNavigation } from '@react-navigation/core';
@@ -8,23 +8,51 @@ import Colors from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { CommentType, PostType } from '../types';
 
-// Dummy Data
-import singlePost from '../data/singlePost';
-import commentsData from '../data/comments';
 import { useEffect } from 'react';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { COMMENT_URL } from '../urls';
 
 
 export default function SinglePostScreen() {
-  const [commentText, setCommentText] = useState('');
+  const [commentText, setCommentText] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const [post, setPost] = useState<PostType | null>(null);
-  const [comments, setComments] = useState<CommentType[] | null>(null);
-  const route: RouteProp<{ params: { post: PostType } }, 'params'> = useRoute();
+  const [comments, setComments] = useState<CommentType[]>([]);
+  const route: RouteProp<{ params: { post: PostType/*, deletePosts: Function, updatePostLikes: Function*/ } }, 'params'> = useRoute();
   const navigation = useNavigation();
 
-  const onSubmitComment = () => {
-    console.warn('Pressed', commentText);
+  const onSubmitComment = async () => {
+    if (!commentText || commentText.trim() === '') {
+      Alert.alert(
+        'Error',
+        'The Comment field is empty!',
+        [{
+          text: 'Ok',
+        }]
+      );
+      return;
+    }
+
+    const tokenString = await getData(tokenName);
+    if (!tokenString) {
+      navigation.navigate('Login');
+      return;
+    }
+    const token: tokenType = JSON.parse(tokenString);
+
+    const response = await axiosHandler({
+      url: `${COMMENT_URL}`,
+      method: 'POST',
+      data: {
+        post_id: route.params.post.id, comment: commentText
+      },
+      token: token.access_token,
+    })?.catch(e => setError(e.response.data));
+
+    if (response) {
+      setCommentText('');
+      setComments(prev => [...prev, response.data]);
+    }
   }
 
   const onCancel = () => {
@@ -34,28 +62,51 @@ export default function SinglePostScreen() {
   const getComments = async () => {
     const tokenString = await getData(tokenName);
     if (!tokenString) {
-        navigation.navigate('Login');
-        return;
+      navigation.navigate('Login');
+      return;
     }
     const token: tokenType = JSON.parse(tokenString);
 
     const response = await axiosHandler({
-        url: `${COMMENT_URL}/${route.params.post.id}`,
-        method: 'GET',
-        token: token.access_token,
-    })?.catch(e => null);
+      url: `${COMMENT_URL}/${route.params.post.id}`,
+      method: 'GET',
+      token: token.access_token,
+    })?.catch(e => setError(e.response.data));
 
     if (response) {
       setComments(response.data.results);
     }
-}
+  }
+
+  const onChangeComments = (action: string = 'new', comment: CommentType) => {
+    let newCommentsList: CommentType[] = comments;
+    if (action === 'new') {
+      newCommentsList = [...newCommentsList, comment];
+    } else if (action === 'delete') {
+      newCommentsList = newCommentsList.filter(item => item.id !== comment.id);
+    }
+    setComments(newCommentsList);
+  }
 
   useEffect(() => {
     setPost(route.params.post);
     getComments();
   }, [])
 
-  if(!post){
+  useEffect(() => {
+    if (error) {
+      Alert.alert(
+        'Error',
+        error,
+        [{
+          text: 'Ok',
+          onPress: () => setError(null)
+        }]
+      );
+    }
+  }, [error])
+
+  if (!post) {
     return <Text>Loader</Text>
   }
 
@@ -68,9 +119,9 @@ export default function SinglePostScreen() {
         <Text style={styles.headerTitle}>Post</Text>
       </View>
       <FlatList
-        ListHeaderComponent={() => <Post post={post} deletePosts={() => null} />}
+        ListHeaderComponent={() => <Post post={post} deletePosts={() => null} updatePostLikes={() => null} />} // need to be fixed
         data={comments}
-        renderItem={({ item }) => <Comment key={item.id} comment={item} />}
+        renderItem={({ item }) => <Comment key={item.id} comment={item} onChangeComments={onChangeComments} />}
         style={styles.commentSection}
       />
       <KeyboardAvoidingView
@@ -111,7 +162,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     position: 'absolute',
     left: '50%',
-    transform: [{translateX: -10}]
+    transform: [{ translateX: -10 }]
   },
   commentSection: {
     width: '100%',

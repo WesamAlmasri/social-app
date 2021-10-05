@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 
 export type PostHeaderProps = {
     post: PostType,
-    deletePosts: Function
+    deletePosts: Function,
 }
 
 const PostHeader = ({ post, deletePosts }: PostHeaderProps) => {
@@ -41,7 +41,7 @@ const PostHeader = ({ post, deletePosts }: PostHeaderProps) => {
         });
 
         if (response) {
-            await deletePosts(postId);
+            deletePosts(postId);
         }
         setModalVisible(false);
     }
