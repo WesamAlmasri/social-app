@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, Modal, Alert } from 'react-native';
 import { PostType } from '../../../types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -8,22 +8,60 @@ import moment from 'moment';
 import Feather from '@expo/vector-icons/Feather'
 import ProfilePicture from '../../ProfilePicture';
 import { useNavigation } from '@react-navigation/native';
+import { axiosHandler, getData, tokenName, tokenType } from '../../../helper';
+import { POST_URL } from '../../../urls';
+import { StoreStateType } from '../../../store/types';
+import { useSelector } from 'react-redux';
 
 export type PostHeaderProps = {
-    post: PostType
+    post: PostType,
+    deletePosts: Function,
 }
 
-const PostHeader = ({ post }: PostHeaderProps) => {
+const PostHeader = ({ post, deletePosts }: PostHeaderProps) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
+    const userProfile = useSelector(mapStateToProps);
 
-    const onDeletePost = (postId: string) => {
-        console.warn('delete post', postId);
+    const onDeletePost = async (postId: string) => {
+        const tokenString = await getData(tokenName);
+        if (!tokenString) {
+            navigation.navigate('Login');
+            return;
+        }
+        const token: tokenType = JSON.parse(tokenString);
+
+        const response = await axiosHandler({
+            url: `${POST_URL}/${postId}`,
+            method: 'DELETE',
+            token: token.access_token,
+        })?.catch(e => {
+            setError(e.message);
+        });
+
+        if (response) {
+            deletePosts(postId);
+        }
+        setModalVisible(false);
     }
 
     const onPressProfile = () => {
-        navigation.navigate('SingleProfile', {profileId: post.profile.id});
+        navigation.navigate('SingleProfile', { profileId: post.profile.id });
     }
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert(
+                'Error',
+                error,
+                [{
+                    text: 'Ok',
+                    onPress: () => setError(null)
+                }]
+            );
+        }
+    }, [error])
 
     return (
         <View style={styles.postHeaderContainer}>
@@ -34,9 +72,12 @@ const PostHeader = ({ post }: PostHeaderProps) => {
                 <Text style={styles.username}>{post.profile.first_name} {post.profile.last_name}</Text>
                 <Text style={styles.createdAt}>{moment(post.created_at).fromNow()}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.6}>
-                <MaterialCommunityIcons style={styles.threeDotsIcon} size={30} color={Colors.light.tabIconDefault} name='dots-vertical' />
-            </TouchableOpacity>
+            {
+                userProfile.user?.id === post.profile.id &&
+                <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.6}>
+                    <MaterialCommunityIcons style={styles.threeDotsIcon} size={30} color={Colors.light.tabIconDefault} name='dots-vertical' />
+                </TouchableOpacity>
+            }
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -53,14 +94,23 @@ const PostHeader = ({ post }: PostHeaderProps) => {
                             <Feather style={styles.exitBtn} size={25} name='x' />
                         </TouchableOpacity>
                         <Text style={styles.confirmText}>Do you want to delete the comment?</Text>
-                        <TouchableOpacity onPress={() => onDeletePost(post.id)} style={styles.deleteBtn}>
-                            <Text style={styles.deleteBtnText}>Delete</Text>
-                        </TouchableOpacity>
+                        <View style={styles.btnContainer}>
+                            <TouchableOpacity onPress={() => onDeletePost(post.id)} style={styles.deleteBtn}>
+                                <Text style={styles.btnText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
+                                <Text style={styles.btnText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
         </View>
     )
 }
+
+const mapStateToProps = (state: StoreStateType) => ({
+    user: state.user.user,
+});
 
 export default PostHeader;

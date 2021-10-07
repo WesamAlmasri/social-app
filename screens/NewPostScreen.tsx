@@ -1,18 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Platform, StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { Platform, StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Image, Alert, ActivityIndicator } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { useNavigation } from '@react-navigation/core';
 import * as ImagePicker from 'expo-image-picker';
+import { useSelector } from 'react-redux';
+import { StoreStateType } from '../store/types';
+import { axiosHandler, getData, tokenName, tokenType } from '../helper';
+import { CATEGORY_URL, POST_URL } from '../urls';
+import { CategoryType } from '../types';
 
 export default function NewPostScreen() {
 
   const navigation = useNavigation();
+  const { user } = useSelector(mapStateToProps);
+  const [postText, setPostText] = useState<string>('');
+  const [image, setImage] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
 
-  const [postText, setPostText] = useState('');
-  const [images, setImage] = useState('');
-
-  const onPickImage = async() => {
+  const onPickImage = async () => {
     // Ask for permission
     (async () => {
       if (Platform.OS !== 'web') {
@@ -35,7 +44,7 @@ export default function NewPostScreen() {
     }
   }
 
-  const onOpenCamera = async() => {
+  const onOpenCamera = async () => {
     // Ask for permission
     (async () => {
       if (Platform.OS !== 'web') {
@@ -58,14 +67,93 @@ export default function NewPostScreen() {
     }
   }
 
-  const onSubmitPost = () => {
-    console.warn('Pressed', postText);
+  const onSubmitPost = async () => {
+    setSubmitting(true);
+    const formData = new FormData();
+    if (image && image !== '') {
+      // Infer the type of the image
+      let filename: string = image.split('/').pop() || '';
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+      formData.append('image', {uri: image, name: filename, type});
+    }
+    formData.append('text', postText);
+    formData.append('category_id', selectedCategory?.id || categories[0].id);
+
+    const tokenString = await getData(tokenName);
+    if (!tokenString) {
+      navigation.navigate('Login');
+      return;
+    }
+    const token: tokenType = JSON.parse(tokenString);
+
+    const response = await axiosHandler({
+      url: POST_URL,
+      method: 'POST',
+      data: formData,
+      extra: { 'Content-Type': 'multipart/form-data' },
+      token: token.access_token,
+    })?.catch(e => {
+      setError(e.message);
+    });
+
+    if (response) {
+      Alert.alert(
+        'Success',
+        'Your post has been shared.',
+        [{
+          text: 'Ok',
+          onPress: () => navigation.navigate('HomeScreen')
+        }]
+      );
+    }
+    setSubmitting(false);
   }
+
+  const getAllCategories = async () => {
+    const tokenString = await getData(tokenName);
+    if (!tokenString) {
+      navigation.navigate('Login');
+      return;
+    }
+    const token: tokenType = JSON.parse(tokenString);
+
+    const response = await axiosHandler({
+      url: CATEGORY_URL,
+      method: 'GET',
+      token: token.access_token,
+    })?.catch(e => {
+      setError('Error occurred!');
+    });
+
+    if (response) {
+      setCategories(response.data);
+    } else {
+      setCategories([]);
+      setError('Error occurred!');
+    }
+  };
 
   const onCancel = () => {
     navigation.goBack();
   }
 
+  useEffect(() => {
+    getAllCategories();
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert(
+        'Error',
+        error,
+        [{
+          text: 'Ok',
+          onPress: () => setError(null)
+        }]
+      );
+    }
+  }, [error])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -73,10 +161,24 @@ export default function NewPostScreen() {
         <TouchableOpacity onPress={onCancel} activeOpacity={0.8}>
           <AntDesign color={Colors.light.tabIconDefault} size={30} name='closecircle' />
         </TouchableOpacity>
-        <Text style={styles.username}>Tamara</Text>
+        <Text style={styles.username}>{user?.user?.username}</Text>
         <TouchableOpacity onPress={onSubmitPost} activeOpacity={0.8}>
-          <Ionicons color={postText === '' && images.length === 0 ? Colors.light.tabIconDefault : Colors.light.tabIconSelected} size={35} name='arrow-up-circle' />
+          {
+            submitting ? 
+            <ActivityIndicator size="large" color="blue" />
+            :
+            <Ionicons color={postText === '' && image === '' ? Colors.light.tabIconDefault : Colors.light.tabIconSelected} size={35} name='arrow-up-circle' />
+          }
+        
         </TouchableOpacity>
+      </View>
+      <Text style={styles.catHeader}>Category</Text>
+      <View style={styles.catContainer}>
+        {
+          categories.map(cat => <TouchableOpacity key={cat.id} style={{ ...styles.catItem, backgroundColor: selectedCategory?.name === cat.name ? 'blue' : '#eeeeee' }} onPress={() => setSelectedCategory(cat)}>
+            <Text style={{ color: selectedCategory?.name === cat.name ? '#fff' : 'black' }}>{cat.name}</Text>
+          </TouchableOpacity>)
+        }
       </View>
       <KeyboardAvoidingView
         style={styles.bottomPart}
@@ -88,16 +190,26 @@ export default function NewPostScreen() {
 
         <View style={styles.footer}>
           <TouchableOpacity style={styles.pickImageButton} onPress={onPickImage} activeOpacity={0.8}>
-            <Ionicons color={'#a6a6a6'} size={30} name='image-outline' />
+            <Ionicons color={postText === '' && image === '' ? '#a6a6a6' : 'blue'} size={30} name='image-outline' />
           </TouchableOpacity>
           <TouchableOpacity style={styles.pickImageButton} onPress={onOpenCamera} activeOpacity={0.8}>
-            <Ionicons color={'#a6a6a6'} size={30} name='camera-outline' />
+            <Ionicons color={postText === '' && image === '' ? '#a6a6a6' : 'blue'} size={30} name='camera-outline' />
           </TouchableOpacity>
         </View>
+        {
+          image !== '' &&
+          <View style={styles.inputContainer}>
+            <Image style={styles.image} source={{ uri: image }} />
+          </View>
+        }
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
+
+const mapStateToProps = (state: StoreStateType) => ({
+  user: state.user.user,
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -118,9 +230,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20
   },
-  bottomPart:{
+  bottomPart: {
     flex: 1,
-    width: '100%' 
+    width: '100%'
   },
   postInput: {
     padding: 15,
@@ -137,5 +249,35 @@ const styles = StyleSheet.create({
   },
   pickImageButton: {
     marginRight: 15
-  }
+  },
+  catItem: {
+    marginLeft: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 15
+  },
+  catHeader: {
+    marginLeft: 20,
+    fontSize: 20,
+    fontWeight: 'bold'
+  },
+  catContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    marginVertical: 5,
+    marginHorizontal: 10,
+    paddingVertical: 6,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'grey'
+  },
+  inputContainer: {
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  image: {
+    width: '50%',
+    height: 100,
+    resizeMode: 'contain'
+  },
 });

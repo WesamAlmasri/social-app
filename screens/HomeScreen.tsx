@@ -20,6 +20,29 @@ export default function HomeScreen() {
 
   const navigation = useNavigation();
 
+  const deletePosts = (postId: string) => {
+    let newPostsList: PostType[] | null = posts;
+    if(posts){
+      newPostsList = posts?.filter(post => post.id !== postId);
+    }
+    setPosts(newPostsList);
+  }
+
+  const updatePostLikes = (postId: string, add: boolean) => {
+    let newPostsList: PostType[] | null = posts;
+      newPostsList = posts?.map(post => {
+        if(post.id !== postId){
+          return post;
+        } else {
+          return {
+            ...post, am_like: !post.am_like,
+            likes: post.likes ? post.am_like ? post.likes - 1 : post.likes + 1 : undefined
+          };
+        }
+      }) || null;
+    setPosts(newPostsList);
+  }
+
   const getAllCategories = async() => {
     const tokenString = await getData(tokenName);
     if (!tokenString) {
@@ -98,7 +121,7 @@ export default function HomeScreen() {
       );
     }
   }, [error]);
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.topBarLinksContainer}>
@@ -111,7 +134,7 @@ export default function HomeScreen() {
           horizontal={true}
         />
       </View>
-      <Feed Header={NewPostRow} posts={posts} />
+      <Feed Header={NewPostRow} posts={posts} deletePosts={deletePosts} updatePostLikes={updatePostLikes} />
     </View>
   );
 }
