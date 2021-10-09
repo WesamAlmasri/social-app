@@ -12,15 +12,19 @@ import { INTERACTION_URL } from '../../../urls';
 import { updatePost } from '../../../store/posts/actionCreators';
 
 export type PostFooterProps = {
-    post: PostType
+    post: PostType,
+    single?: boolean
 }
 
-const PostFooter = ({ post }: PostFooterProps) => {
+const PostFooter = ({ post, single }: PostFooterProps) => {
     const { userDetails } = useSelector(mapStateToProps);
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
     const onPostDetails = () => {
+        console.log('single : ', single);
+        if(single) return;
+        console.log('reached')
         navigation.navigate('SinglePostScreen', { postId: post.id });
     }
 

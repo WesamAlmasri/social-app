@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
+import { Platform, StyleSheet, SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import Post from '../components/Post';
 import { useRoute } from '@react-navigation/native';
 import { RouteProp, useNavigation } from '@react-navigation/core';
@@ -12,17 +12,19 @@ import { useEffect } from 'react';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { COMMENT_URL } from '../urls';
 import { StoreStateType } from '../store/types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateCommentsList } from '../store/comments/actionCreators';
 
 
 export default function SinglePostScreen() {
   const [commentText, setCommentText] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [post, setPost] = useState<PostType | null>(null);
-  const [comments, setComments] = useState<CommentType[]>([]);
   const route: RouteProp<{ params: { postId: string } }, 'params'> = useRoute();
   const navigation = useNavigation();
-  const { posts } = useSelector(mapStateToProps);
+  const { posts, comments } = useSelector(mapStateToProps);
+  const dispatch = useDispatch();
 
   const onSubmitComment = async () => {
     if (!commentText || commentText.trim() === '') {
@@ -32,10 +34,12 @@ export default function SinglePostScreen() {
         [{
           text: 'Ok',
         }]
-      );
-      return;
-    }
+        );
+        return;
+      }
 
+    setLoading(true);
+      
     const tokenString = await getData(tokenName);
     if (!tokenString) {
       navigation.navigate('Login');
@@ -54,8 +58,9 @@ export default function SinglePostScreen() {
 
     if (response) {
       setCommentText('');
-      setComments(prev => [...prev, response.data]);
+      await getComments();
     }
+    setLoading(false);
   }
 
   const onCancel = () => {
@@ -77,21 +82,12 @@ export default function SinglePostScreen() {
     })?.catch(e => setError(e.response.data));
 
     if (response) {
-      setComments(response.data.results);
+      dispatch(updateCommentsList(response.data.results.reverse()));
     }
-  }
-
-  const onChangeComments = (action: string = 'new', comment: CommentType) => {
-    let newCommentsList: CommentType[] = comments;
-    if (action === 'new') {
-      newCommentsList = [...newCommentsList, comment];
-    } else if (action === 'delete') {
-      newCommentsList = newCommentsList.filter(item => item.id !== comment.id);
-    }
-    setComments(newCommentsList);
   }
 
   useEffect(() => {
+    dispatch(updateCommentsList([]));
     const currentPost: PostType | undefined = posts.find(post => post.id === route.params.postId);
     if(!currentPost){
       navigation.goBack();
@@ -129,7 +125,7 @@ export default function SinglePostScreen() {
       <FlatList
         ListHeaderComponent={() => <Post post={post} single />}
         data={comments}
-        renderItem={({ item }) => <Comment key={item.id} comment={item} onChangeComments={onChangeComments} />}
+        renderItem={({ item }) => <Comment key={item.id} comment={item} postId={post.id} />}
         style={styles.commentSection}
       />
       <KeyboardAvoidingView
@@ -144,7 +140,10 @@ export default function SinglePostScreen() {
           placeholder='Write a comment'
         />
         <TouchableOpacity onPress={onSubmitComment} activeOpacity={0.8}>
+          {
+            loading ? <ActivityIndicator /> :
           <Ionicons color={commentText === '' ? Colors.light.tabIconDefault : Colors.light.tabIconSelected} size={35} name='arrow-up-circle' />
+          }
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -153,6 +152,7 @@ export default function SinglePostScreen() {
 
 const mapStateToProps = (state: StoreStateType) => ({
   posts: state.posts.posts,
+  comments: state.comments.comments
 });
 
 const styles = StyleSheet.create({

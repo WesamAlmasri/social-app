@@ -17,17 +17,17 @@ const Post = ({ post, single }: PostProps) => {
 
     const onPostDetails = () => {
         if(single) return;
-        navigation.navigate('SinglePostScreen', { post: post });
+        navigation.navigate('SinglePostScreen', { postId: post.id });
     }
 
     return (
 
         <View style={styles.container}>
-            <PostHeader post={post} single />
+            <PostHeader post={post} single={single} />
             <TouchableOpacity onPress={onPostDetails} activeOpacity={0.8}>
                 <PostBody post={post} />
             </TouchableOpacity>
-            <PostFooter post={post} />
+            <PostFooter post={post} single={single} />
         </View>
     )
 }
