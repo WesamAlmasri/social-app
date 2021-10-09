@@ -11,6 +11,8 @@ import { CommentType, PostType } from '../types';
 import { useEffect } from 'react';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { COMMENT_URL } from '../urls';
+import { StoreStateType } from '../store/types';
+import { useSelector } from 'react-redux';
 
 
 export default function SinglePostScreen() {
@@ -18,8 +20,9 @@ export default function SinglePostScreen() {
   const [error, setError] = useState<string | null>(null);
   const [post, setPost] = useState<PostType | null>(null);
   const [comments, setComments] = useState<CommentType[]>([]);
-  const route: RouteProp<{ params: { post: PostType/*, deletePosts: Function, updatePostLikes: Function*/ } }, 'params'> = useRoute();
+  const route: RouteProp<{ params: { postId: string } }, 'params'> = useRoute();
   const navigation = useNavigation();
+  const { posts } = useSelector(mapStateToProps);
 
   const onSubmitComment = async () => {
     if (!commentText || commentText.trim() === '') {
@@ -44,7 +47,7 @@ export default function SinglePostScreen() {
       url: `${COMMENT_URL}`,
       method: 'POST',
       data: {
-        post_id: route.params.post.id, comment: commentText
+        post_id: route.params.postId, comment: commentText
       },
       token: token.access_token,
     })?.catch(e => setError(e.response.data));
@@ -68,7 +71,7 @@ export default function SinglePostScreen() {
     const token: tokenType = JSON.parse(tokenString);
 
     const response = await axiosHandler({
-      url: `${COMMENT_URL}/${route.params.post.id}`,
+      url: `${COMMENT_URL}/${route.params.postId}`,
       method: 'GET',
       token: token.access_token,
     })?.catch(e => setError(e.response.data));
@@ -89,9 +92,14 @@ export default function SinglePostScreen() {
   }
 
   useEffect(() => {
-    setPost(route.params.post);
+    const currentPost: PostType | undefined = posts.find(post => post.id === route.params.postId);
+    if(!currentPost){
+      navigation.goBack();
+      return;
+    }
+    setPost(currentPost);
     getComments();
-  }, [])
+  }, [posts])
 
   useEffect(() => {
     if (error) {
@@ -119,7 +127,7 @@ export default function SinglePostScreen() {
         <Text style={styles.headerTitle}>Post</Text>
       </View>
       <FlatList
-        ListHeaderComponent={() => <Post post={post} deletePosts={() => null} updatePostLikes={() => null} />} // need to be fixed
+        ListHeaderComponent={() => <Post post={post} single />}
         data={comments}
         renderItem={({ item }) => <Comment key={item.id} comment={item} onChangeComments={onChangeComments} />}
         style={styles.commentSection}
@@ -142,6 +150,10 @@ export default function SinglePostScreen() {
     </SafeAreaView>
   );
 }
+
+const mapStateToProps = (state: StoreStateType) => ({
+  posts: state.posts.posts,
+});
 
 const styles = StyleSheet.create({
   container: {

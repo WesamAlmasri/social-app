@@ -4,17 +4,18 @@ import Post from '../Post';
 import styles from './style';
 import { PostType } from '../../types';
 import NewPostRow from '../NewPostRow';
+import { useSelector } from 'react-redux';
+import { StoreStateType } from '../../store/types';
 
 export type FeedProps = {
     Header: ComponentType | undefined,
-    posts: PostType[] | null,
-    deletePosts: Function,
-    updatePostLikes: Function
 }
 
 
-const Feed = ({ posts, Header, deletePosts, updatePostLikes }: FeedProps) => (
-    <View style={styles.feedContainer}>
+const Feed = ({ Header }: FeedProps) => {
+    const { posts } = useSelector(mapStateToProps);
+    
+    return (<View style={styles.feedContainer}>
         {
             !posts ?
                 <ActivityIndicator size="large" color="green" />
@@ -22,7 +23,7 @@ const Feed = ({ posts, Header, deletePosts, updatePostLikes }: FeedProps) => (
                 posts?.length !== 0 ?
                     <FlatList
                         data={posts}
-                        renderItem={({ item }) => <Post post={item} deletePosts={deletePosts} updatePostLikes={updatePostLikes} />}
+                        renderItem={({ item }) => <Post post={item} />}
                         keyExtractor={(item) => item.id}
                         ListHeaderComponent={Header}
                     />
@@ -33,7 +34,12 @@ const Feed = ({ posts, Header, deletePosts, updatePostLikes }: FeedProps) => (
                     </>
         }
 
-    </View>
-)
+    </View>)
+}
+
+const mapStateToProps = (state: StoreStateType) => ({
+    posts: state.posts.posts,
+});
+
 
 export default Feed;

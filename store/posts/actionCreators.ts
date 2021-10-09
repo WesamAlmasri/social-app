@@ -2,7 +2,7 @@ import { PostType } from '../../types';
 import * as actionTypes from './actionTypes';
 import { UpdatePostsListActionType } from './types';
 
-export const getPosts = (posts: PostType[]) => {
+export const updatePostsList = (posts: PostType[]) => {
   const action: UpdatePostsListActionType = {
     type: actionTypes.GET_POSTS,
     payload: posts,

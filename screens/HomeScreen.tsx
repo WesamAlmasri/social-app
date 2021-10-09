@@ -1,47 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, Text } from 'react-native';
+import { Alert, StyleSheet, Text } from 'react-native';
 import NewPostRow from '../components/NewPostRow';
 import Feed from '../components/Feed';
 import { View } from '../components/Themed';
 
-// Dummy Data
+
 import { CategoryType, PostType } from '../types';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { useNavigation } from '@react-navigation/core';
 import { CATEGORY_POSTS_URL, CATEGORY_URL, TIMELINE_POSTS_URL } from '../urls';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { StoreStateType } from '../store/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { updatePostsList } from '../store/posts/actionCreators';
 
 export default function HomeScreen() {
-  const [posts, setPosts] = useState<PostType[] | null>(null);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [currentCat, setCurrentCat] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { posts } = useSelector(mapStateToProps);
 
   const navigation = useNavigation();
 
-  const deletePosts = (postId: string) => {
-    let newPostsList: PostType[] | null = posts;
-    if(posts){
-      newPostsList = posts?.filter(post => post.id !== postId);
-    }
-    setPosts(newPostsList);
-  }
-
-  const updatePostLikes = (postId: string, add: boolean) => {
-    let newPostsList: PostType[] | null = posts;
-      newPostsList = posts?.map(post => {
-        if(post.id !== postId){
-          return post;
-        } else {
-          return {
-            ...post, am_like: !post.am_like,
-            likes: post.likes ? post.am_like ? post.likes - 1 : post.likes + 1 : undefined
-          };
-        }
-      }) || null;
-    setPosts(newPostsList);
-  }
+  const dispatch = useDispatch();
 
   const getAllCategories = async() => {
     const tokenString = await getData(tokenName);
@@ -89,9 +71,9 @@ export default function HomeScreen() {
     });
 
     if (response) {
-      setPosts(response.data.results);
+      dispatch(updatePostsList(response.data.results))
     } else {
-      setPosts([]);
+      dispatch(updatePostsList([]))
       setError('Error occurred!');
     }
 
@@ -134,10 +116,14 @@ export default function HomeScreen() {
           horizontal={true}
         />
       </View>
-      <Feed Header={NewPostRow} posts={posts} deletePosts={deletePosts} updatePostLikes={updatePostLikes} />
+      <Feed Header={NewPostRow} />
     </View>
   );
 }
+
+const mapStateToProps = (state: StoreStateType) => ({
+  posts: state.posts.posts,
+});
 
 const styles = StyleSheet.create({
   container: {

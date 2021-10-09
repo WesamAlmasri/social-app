@@ -8,7 +8,6 @@ export type PostBodyProps = {
 }
 
 const PostBody = ({ post }: PostBodyProps) => {
-
     return (
         <View style={styles.postBodyContainer}>
             {post.text !== '' && <Text style={styles.content}>{post.text}</Text>}
