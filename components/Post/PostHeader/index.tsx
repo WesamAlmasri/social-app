@@ -56,7 +56,7 @@ const PostHeader = ({ post,single }: PostHeaderProps) => {
     }
 
     const onPressProfile = () => {
-        navigation.navigate('SingleProfile', { profileId: post.profile.id });
+        navigation.navigate('SingleProfile', { profileName: post.profile.user?.username });
     }
 
     useEffect(() => {

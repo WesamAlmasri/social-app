@@ -175,8 +175,8 @@ export function ProfileNavigator() {
       <ProfileStack.Screen
         name="ProfileScreen"
         // component={() => ProfileScreen({profile: meProfile, meProfile: true})}
-        children={() => ProfileScreen({ profileId: meProfile.id })}
-        options={{ headerTitle: 'Profile' }}
+        children={ProfileScreen}
+        options={{ headerTitle: 'Profile', headerShown: false }}
       />
       <ProfileStack.Screen
         name="EditProfileScreen"

@@ -2,7 +2,6 @@ import React, { ComponentType } from 'react';
 import { View, FlatList, ActivityIndicator, Text } from 'react-native';
 import Post from '../Post';
 import styles from './style';
-import { PostType } from '../../types';
 import NewPostRow from '../NewPostRow';
 import { useSelector } from 'react-redux';
 import { StoreStateType } from '../../store/types';
@@ -14,11 +13,13 @@ export type FeedProps = {
 
 const Feed = ({ Header }: FeedProps) => {
     const { posts } = useSelector(mapStateToProps);
-    
+
     return (<View style={styles.feedContainer}>
         {
             !posts ?
-                <ActivityIndicator size="large" color="green" />
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color="green" />
+                </View>
                 :
                 posts?.length !== 0 ?
                     <FlatList
