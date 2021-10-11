@@ -100,7 +100,6 @@ export default function NewPostScreen() {
     });
 
     if (response) {
-      await getPosts();
       Alert.alert(
         'Success',
         'Your post has been shared.',
@@ -136,36 +135,6 @@ export default function NewPostScreen() {
       setError('Error occurred!');
     }
   };
-
-  const getPosts = async () => {
-    const tokenString = await getData(tokenName);
-    if (!tokenString) {
-      navigation.navigate('Login');
-      return;
-    }
-    const token: tokenType = JSON.parse(tokenString);
-
-    let url = TIMELINE_POSTS_URL;
-
-    url = `${CATEGORY_POSTS_URL}/${selectedCategory?.name}`
-
-
-    const response = await axiosHandler({
-      url: url,
-      method: 'GET',
-      token: token.access_token,
-    })?.catch(e => {
-      setError('Error occurred!');
-    });
-
-    if (response) {
-      dispatch(updatePostsList(response.data.results))
-    } else {
-      dispatch(updatePostsList([]))
-      setError('Error occurred!');
-    }
-
-  }
 
   const onCancel = () => {
     navigation.goBack();

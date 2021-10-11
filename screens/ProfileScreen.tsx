@@ -18,6 +18,8 @@ import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { PROFILE_POSTS_URL, PROFILE_URL } from '../urls';
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePostsList } from '../store/posts/actionCreators';
+import { updateOtherProfileDetails } from '../store/userDetails/actionCreators';
+import NewPostRow from '../components/NewPostRow';
 
 export type ProfileScreenProps = {
 
@@ -34,12 +36,15 @@ export type ProfileTopPartProps = {
   meProfile: boolean
 }
 
+export type ProfileBackHeaderProps = {
+
+}
+
 export default function ProfileScreen() {
-  const [profileData, setProfileData] = useState<ProfileType<UserFileType> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { user, posts } = useSelector(mapStateToProps);
+  const { user, posts, profile } = useSelector(mapStateToProps);
 
   const route = useRoute<RouteProp<ProfileScreenRouteProp, 'params'>>();
 
@@ -56,11 +61,11 @@ export default function ProfileScreen() {
       method: 'GET',
       token: token.access_token,
     })?.catch(e => {
-      setError(e.response.data);
+      setError(e.message);
     });
 
     if (response) {
-      setProfileData(response.data);
+      dispatch(updateOtherProfileDetails(response.data));
     } else {
       setError('Error occurred!');
     }
@@ -81,7 +86,7 @@ export default function ProfileScreen() {
       method: 'GET',
       token: token.access_token,
     })?.catch(e => {
-      setError(e.response.data);
+      setError(e.message);
     });
 
     if (response) {
@@ -96,23 +101,22 @@ export default function ProfileScreen() {
   useEffect(() => {
     (
       async () => {
+        dispatch(updateOtherProfileDetails(null));
         dispatch(updatePostsList([]));
         if (!route.params?.profileName) {
-          console.log(user?.user?.username);
           await getProfileData(user?.user?.username);
-          await getPosts(user?.id);
         } else {
-          console.log(route.params?.profileName);
           await getProfileData(route.params?.profileName);
-          await getPosts(profileData?.id);
         }
       }
     )();
   }, [])
 
-  // useEffect(() => {
-
-  // },[profileData]);
+  useEffect(() => {
+    if (profile) {
+      (async () => await getPosts(profile?.id))();
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (error) {
@@ -127,7 +131,7 @@ export default function ProfileScreen() {
     }
   }, [error]);
 
-  if (!profileData) {
+  if (!profile) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="green" />
@@ -138,15 +142,27 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {
-        profileData?.id !== user?.id && <ProfileBackHeader />
+        profile?.id !== user?.id && <ProfileBackHeader />
       }
-      <Feed Header={() => ProfileTopPart({ profile: profileData, meProfile: profileData?.id === user?.id })} />
+
+      <Feed Header={() => {
+        return (
+          <>
+            <ProfileTopPart profile={profile} meProfile={profile?.id === user?.id} />
+            {
+              posts.length === 0 && <>
+                <NewPostRow />
+                <Text>No posts available</Text>
+              </>
+            }
+          </>
+        )
+      }} />
     </SafeAreaView>
   );
 }
 
 const ProfileTopPart = ({ profile, meProfile }: ProfileTopPartProps) => {
-  console.log('Profile from TOP PART : ', profile)
   if (!profile) {
     return null;
   }
@@ -159,7 +175,7 @@ const ProfileTopPart = ({ profile, meProfile }: ProfileTopPartProps) => {
   )
 }
 
-const ProfileBackHeader = () => {
+const ProfileBackHeader = ({ }: ProfileBackHeaderProps) => {
 
   const navigation = useNavigation();
 
@@ -181,7 +197,8 @@ const ProfileBackHeader = () => {
 
 const mapStateToProps = (state: StoreStateType) => ({
   posts: state.posts.posts,
-  user: state.user.user
+  user: state.user.user,
+  profile: state.user.otherProfile
 });
 
 

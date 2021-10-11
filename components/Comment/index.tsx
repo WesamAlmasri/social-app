@@ -8,8 +8,9 @@ import Feather from '@expo/vector-icons/Feather'
 import { useNavigation } from "@react-navigation/native";
 import { axiosHandler, getData, tokenName, tokenType } from "../../helper";
 import { COMMENT_URL } from "../../urls";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteComment } from "../../store/comments/actionCreators";
+import { StoreStateType } from "../../store/types";
 
 export type CommentProps = {
     comment: CommentType,
@@ -20,6 +21,7 @@ const Comment = ({ comment, postId }: CommentProps) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const { user } = useSelector(mapStateToProps);
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
@@ -46,6 +48,7 @@ const Comment = ({ comment, postId }: CommentProps) => {
     }
 
     const onPressProfile = () => {
+        if(comment.profile.id === user?.id) return;
         navigation.navigate('SingleProfile', { profileId: comment.profile.id });
     }
 
@@ -100,5 +103,9 @@ const Comment = ({ comment, postId }: CommentProps) => {
         </TouchableOpacity>
     )
 }
+
+const mapStateToProps = (state: StoreStateType) => ({
+    user: state.user.user,
+});
 
 export default Comment;

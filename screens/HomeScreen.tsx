@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text } from 'react-native';
 import NewPostRow from '../components/NewPostRow';
 import Feed from '../components/Feed';
 import { View } from '../components/Themed';
@@ -13,6 +13,7 @@ import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { StoreStateType } from '../store/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePostsList } from '../store/posts/actionCreators';
+import { useIsFocused } from "@react-navigation/native";
 
 export default function HomeScreen() {
   const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -20,12 +21,13 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { posts } = useSelector(mapStateToProps);
+  const isFocused = useIsFocused();
 
   const navigation = useNavigation();
 
   const dispatch = useDispatch();
 
-  const getAllCategories = async() => {
+  const getAllCategories = async () => {
     const tokenString = await getData(tokenName);
     if (!tokenString) {
       navigation.navigate('Login');
@@ -50,6 +52,7 @@ export default function HomeScreen() {
   };
 
   const getPosts = async () => {
+    setLoading(true);
     const tokenString = await getData(tokenName);
     if (!tokenString) {
       navigation.navigate('Login');
@@ -76,6 +79,7 @@ export default function HomeScreen() {
       dispatch(updatePostsList([]))
       setError('Error occurred!');
     }
+    setLoading(false);
 
   }
 
@@ -88,8 +92,13 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    getPosts();
-  }, [currentCat]);
+    (async () => {
+
+      if (isFocused) {
+        await getPosts();
+      }
+    })();
+  }, [currentCat, isFocused]);
 
   useEffect(() => {
     if (error) {
@@ -107,16 +116,23 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topBarLinksContainer}>
-        <FlatList 
+        <FlatList
           data={categories || []}
-          renderItem={({item}) => <TouchableOpacity style={{...styles.topBarLinksTouchable, borderBottomWidth: currentCat === item.name ? 1 : 0}} onPress={() => onChangeCategory(item.name)}>
+          renderItem={({ item }) => <TouchableOpacity style={{ ...styles.topBarLinksTouchable, borderBottomWidth: currentCat === item.name ? 1 : 0 }} onPress={() => onChangeCategory(item.name)}>
             <Text style={styles.topBarText}>{item.name}</Text>
           </TouchableOpacity>}
           keyExtractor={(item) => String(item.id)} // should change the database id type from number to uuid (string)
           horizontal={true}
         />
       </View>
-      <Feed Header={NewPostRow} />
+      {
+        loading ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="green" />
+          </View>
+        ) :
+          <Feed Header={NewPostRow} />
+      }
     </View>
   );
 }

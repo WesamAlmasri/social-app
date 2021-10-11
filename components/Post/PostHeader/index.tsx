@@ -56,6 +56,7 @@ const PostHeader = ({ post,single }: PostHeaderProps) => {
     }
 
     const onPressProfile = () => {
+        if(post.profile.user?.username === userProfile.user?.user?.username) return;
         navigation.navigate('SingleProfile', { profileName: post.profile.user?.username });
     }
 
