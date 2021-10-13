@@ -3,6 +3,7 @@ import { UserDetailsActionType, UserDetailsStateType } from './types';
 
 const initialState: UserDetailsStateType = {
   user: null,
+  otherProfile: null,
 };
 
 const reducer = (
@@ -14,6 +15,11 @@ const reducer = (
       return {
         ...state,
         user: action.payload,
+      };
+    case actionTypes.UPDATE_OTHER_PROFILE_DETAILS:
+      return {
+        ...state,
+        otherProfile: action.payload,
       };
     default:
       return state;

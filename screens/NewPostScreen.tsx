@@ -4,11 +4,12 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { useNavigation } from '@react-navigation/core';
 import * as ImagePicker from 'expo-image-picker';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { StoreStateType } from '../store/types';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
-import { CATEGORY_URL, POST_URL } from '../urls';
+import { CATEGORY_POSTS_URL, CATEGORY_URL, POST_URL, TIMELINE_POSTS_URL } from '../urls';
 import { CategoryType } from '../types';
+import { updatePostsList } from '../store/posts/actionCreators';
 
 export default function NewPostScreen() {
 
@@ -20,6 +21,7 @@ export default function NewPostScreen() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
+  const dispatch = useDispatch();
 
   const onPickImage = async () => {
     // Ask for permission

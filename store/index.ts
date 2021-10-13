@@ -6,11 +6,15 @@ import thunk from 'redux-thunk';
 import userDetailsReducer from './userDetails/reducer';
 import notificationsReducer from './notifications/reducer';
 import chatReducer from './chat/reducer';
+import postsReducer from './posts/reducer';
+import commentsReducer from './comments/reducer';
 
 const reducers = combineReducers({
   user: userDetailsReducer,
   notifications: notificationsReducer,
   chat: chatReducer,
+  posts: postsReducer,
+  comments: commentsReducer
 });
 
 const store = () => {
