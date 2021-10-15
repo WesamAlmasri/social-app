@@ -9,26 +9,25 @@ import { useNavigation } from '@react-navigation/native';
 
 export type PostProps = {
     post: PostType,
-    deletePosts: Function,
-    updatePostLikes: Function
+    single?: boolean
 }
 
-const Post = ({ post, deletePosts, updatePostLikes }: PostProps) => {
+const Post = ({ post, single }: PostProps) => {
     const navigation = useNavigation();
 
     const onPostDetails = () => {
-        navigation.navigate('SinglePostScreen', { post: post/*, deletePosts: deletePosts, updatePostLikes: updatePostLikes*/ });
-        navigation.setOptions({})
+        if(single) return;
+        navigation.navigate('SinglePostScreen', { postId: post.id });
     }
 
     return (
 
         <View style={styles.container}>
-            <PostHeader post={post} deletePosts={deletePosts} />
+            <PostHeader post={post} single={single} />
             <TouchableOpacity onPress={onPostDetails} activeOpacity={0.8}>
                 <PostBody post={post} />
             </TouchableOpacity>
-            <PostFooter post={post} updatePostLikes={updatePostLikes} />
+            <PostFooter post={post} single={single} />
         </View>
     )
 }

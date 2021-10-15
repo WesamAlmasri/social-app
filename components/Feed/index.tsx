@@ -1,39 +1,34 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, useEffect, useState } from 'react';
 import { View, FlatList, ActivityIndicator, Text } from 'react-native';
 import Post from '../Post';
 import styles from './style';
-import { PostType } from '../../types';
 import NewPostRow from '../NewPostRow';
+import { useSelector } from 'react-redux';
+import { StoreStateType } from '../../store/types';
 
 export type FeedProps = {
     Header: ComponentType | undefined,
-    posts: PostType[] | null,
-    deletePosts: Function,
-    updatePostLikes: Function
 }
 
 
-const Feed = ({ posts, Header, deletePosts, updatePostLikes }: FeedProps) => (
-    <View style={styles.feedContainer}>
-        {
-            !posts ?
-                <ActivityIndicator size="large" color="green" />
-                :
-                posts?.length !== 0 ?
-                    <FlatList
-                        data={posts}
-                        renderItem={({ item }) => <Post post={item} deletePosts={deletePosts} updatePostLikes={updatePostLikes} />}
-                        keyExtractor={(item) => item.id}
-                        ListHeaderComponent={Header}
-                    />
-                    :
-                    <>
-                        <NewPostRow />
-                        <Text style={styles.noPostText}>No posts available</Text>
-                    </>
-        }
+const Feed = ({ Header }: FeedProps) => {
+    const { posts } = useSelector(mapStateToProps);
 
-    </View>
-)
+
+    return (<View style={styles.feedContainer}>
+        <FlatList
+            data={posts}
+            renderItem={({ item }) => <Post post={item} />}
+            keyExtractor={(item) => item.id}
+            ListHeaderComponent={Header}
+        />
+    </View>)
+}
+
+const mapStateToProps = (state: StoreStateType) => ({
+    posts: state.posts.posts,
+    user: state.user.user
+});
+
 
 export default Feed;

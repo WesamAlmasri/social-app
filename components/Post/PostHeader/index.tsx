@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, Modal, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import { PostType } from '../../../types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../../../constants/Colors';
@@ -11,20 +11,24 @@ import { useNavigation } from '@react-navigation/native';
 import { axiosHandler, getData, tokenName, tokenType } from '../../../helper';
 import { POST_URL } from '../../../urls';
 import { StoreStateType } from '../../../store/types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletePost } from '../../../store/posts/actionCreators';
 
 export type PostHeaderProps = {
     post: PostType,
-    deletePosts: Function,
+    single?: boolean
 }
 
-const PostHeader = ({ post, deletePosts }: PostHeaderProps) => {
+const PostHeader = ({ post,single }: PostHeaderProps) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const navigation = useNavigation();
     const userProfile = useSelector(mapStateToProps);
+    const [loading, setLoading] = useState<boolean>(false);
+    const dispatch = useDispatch();
 
     const onDeletePost = async (postId: string) => {
+        setLoading(true);
         const tokenString = await getData(tokenName);
         if (!tokenString) {
             navigation.navigate('Login');
@@ -38,16 +42,22 @@ const PostHeader = ({ post, deletePosts }: PostHeaderProps) => {
             token: token.access_token,
         })?.catch(e => {
             setError(e.message);
+            setLoading(false);
         });
 
         if (response) {
-            deletePosts(postId);
+            if(single){
+                navigation.navigate('HomeScreen');
+            }
+            dispatch(deletePost(postId));
         }
+        setLoading(false);
         setModalVisible(false);
     }
 
     const onPressProfile = () => {
-        navigation.navigate('SingleProfile', { profileId: post.profile.id });
+        if(post.profile.user?.username === userProfile.user?.user?.username) return;
+        navigation.navigate('SingleProfile', { profileName: post.profile.user?.username });
     }
 
     useEffect(() => {
@@ -95,8 +105,8 @@ const PostHeader = ({ post, deletePosts }: PostHeaderProps) => {
                         </TouchableOpacity>
                         <Text style={styles.confirmText}>Do you want to delete the comment?</Text>
                         <View style={styles.btnContainer}>
-                            <TouchableOpacity onPress={() => onDeletePost(post.id)} style={styles.deleteBtn}>
-                                <Text style={styles.btnText}>Delete</Text>
+                            <TouchableOpacity onPress={() => (async () => await onDeletePost(post.id))()} style={styles.deleteBtn}>
+                                <Text style={styles.btnText}>{loading ? <ActivityIndicator color='white' /> : 'Delete'}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
                                 <Text style={styles.btnText}>Cancel</Text>

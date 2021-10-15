@@ -4,46 +4,30 @@ import NewPostRow from '../components/NewPostRow';
 import Feed from '../components/Feed';
 import { View } from '../components/Themed';
 
-// Dummy Data
+
 import { CategoryType, PostType } from '../types';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { useNavigation } from '@react-navigation/core';
 import { CATEGORY_POSTS_URL, CATEGORY_URL, TIMELINE_POSTS_URL } from '../urls';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { StoreStateType } from '../store/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { updatePostsList } from '../store/posts/actionCreators';
+import { useIsFocused } from "@react-navigation/native";
 
 export default function HomeScreen() {
-  const [posts, setPosts] = useState<PostType[] | null>(null);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [currentCat, setCurrentCat] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { posts } = useSelector(mapStateToProps);
+  const isFocused = useIsFocused();
 
   const navigation = useNavigation();
 
-  const deletePosts = (postId: string) => {
-    let newPostsList: PostType[] | null = posts;
-    if(posts){
-      newPostsList = posts?.filter(post => post.id !== postId);
-    }
-    setPosts(newPostsList);
-  }
+  const dispatch = useDispatch();
 
-  const updatePostLikes = (postId: string, add: boolean) => {
-    let newPostsList: PostType[] | null = posts;
-      newPostsList = posts?.map(post => {
-        if(post.id !== postId){
-          return post;
-        } else {
-          return {
-            ...post, am_like: !post.am_like,
-            likes: post.likes ? post.am_like ? post.likes - 1 : post.likes + 1 : undefined
-          };
-        }
-      }) || null;
-    setPosts(newPostsList);
-  }
-
-  const getAllCategories = async() => {
+  const getAllCategories = async () => {
     const tokenString = await getData(tokenName);
     if (!tokenString) {
       navigation.navigate('Login');
@@ -68,6 +52,7 @@ export default function HomeScreen() {
   };
 
   const getPosts = async () => {
+    setLoading(true);
     const tokenString = await getData(tokenName);
     if (!tokenString) {
       navigation.navigate('Login');
@@ -89,11 +74,12 @@ export default function HomeScreen() {
     });
 
     if (response) {
-      setPosts(response.data.results);
+      dispatch(updatePostsList(response.data.results))
     } else {
-      setPosts([]);
+      dispatch(updatePostsList([]))
       setError('Error occurred!');
     }
+    setLoading(false);
 
   }
 
@@ -106,8 +92,13 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    getPosts();
-  }, [currentCat]);
+    (async () => {
+
+      if (isFocused) {
+        await getPosts();
+      }
+    })();
+  }, [currentCat, isFocused]);
 
   useEffect(() => {
     if (error) {
@@ -125,19 +116,30 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topBarLinksContainer}>
-        <FlatList 
+        <FlatList
           data={categories || []}
-          renderItem={({item}) => <TouchableOpacity style={{...styles.topBarLinksTouchable, borderBottomWidth: currentCat === item.name ? 1 : 0}} onPress={() => onChangeCategory(item.name)}>
+          renderItem={({ item }) => <TouchableOpacity style={{ ...styles.topBarLinksTouchable, borderBottomWidth: currentCat === item.name ? 1 : 0 }} onPress={() => onChangeCategory(item.name)}>
             <Text style={styles.topBarText}>{item.name}</Text>
           </TouchableOpacity>}
           keyExtractor={(item) => String(item.id)} // should change the database id type from number to uuid (string)
           horizontal={true}
         />
       </View>
-      <Feed Header={NewPostRow} posts={posts} deletePosts={deletePosts} updatePostLikes={updatePostLikes} />
+      {
+        loading ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="green" />
+          </View>
+        ) :
+          <Feed Header={NewPostRow} />
+      }
     </View>
   );
 }
+
+const mapStateToProps = (state: StoreStateType) => ({
+  posts: state.posts.posts,
+});
 
 const styles = StyleSheet.create({
   container: {
