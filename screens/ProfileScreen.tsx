@@ -47,7 +47,6 @@ export default function ProfileScreen() {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const { user, posts, profile, profileUsername } = useSelector(mapStateToProps);
-  const route = useRoute<RouteProp<ProfileScreenRouteProp, 'params'>>();
 
   const getProfileData = async (profileName: string | undefined) => {
     const tokenString = await getData(tokenName);
