@@ -56,11 +56,10 @@ const ProfileOptions = ({ profile, meProfile }: ProfileHeaderProps) => {
                 am_follow: !profile.am_follow,
                 followers: profile.followers ? (profile.am_follow ? profile.followers - 1 : profile.followers + 1) : profile.followers
             }));
-            setSubmittingFollow(false);
         } else {
             setError('Error occurred!');
-            setSubmittingFollow(false);
         }
+        setSubmittingFollow(false);
     }
 
     useEffect(() => {

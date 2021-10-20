@@ -21,6 +21,26 @@ const styles = StyleSheet.create({
   },
   createdAt: {
     color:'#a5a5a5'
+  },
+  notificationImage: {
+    backgroundColor: '#d0d9ff',
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  nText: {
+    color: 'green',
+    fontSize: 25
+  },
+  notificationState: {
+    width: 15,
+    height: 15,
+    borderRadius: 15,
+    marginLeft: 'auto',
+    alignSelf: 'center',
+    marginRight: 15
   }
 });
 

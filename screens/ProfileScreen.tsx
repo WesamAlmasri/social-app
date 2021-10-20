@@ -155,8 +155,8 @@ export default function ProfileScreen() {
             <ProfileTopPart profile={profile} meProfile={profile?.id === user?.id} />
             {
               posts.length === 0 && <>
-                <NewPostRow />
-                <Text>No posts available</Text>
+                {/* <NewPostRow /> */}
+                <Text style={{ paddingLeft:10, fontSize: 25}}>No posts available</Text>
               </>
             }
           </>
