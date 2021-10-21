@@ -5,6 +5,8 @@ import { ProfileType, UserFileType } from '../../types';
 import ProfilePicture from '../ProfilePicture';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { updateOtherProfileUsername } from '../../store/userDetails/actionCreators';
+import { useDispatch } from 'react-redux';
 
 export type ConversationHeaderProps = {
     profile: ProfileType<UserFileType>,
@@ -12,13 +14,15 @@ export type ConversationHeaderProps = {
 
 const ConversationHeader = ({ profile }: ConversationHeaderProps) => {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     if(!profile){
         return <Text>Loader</Text>
     }
 
     const onPressProfile = () => {
-        navigation.navigate('SingleProfile', {profileId: profile.id});
+        dispatch(updateOtherProfileUsername(profile));
+        navigation.navigate('SingleProfile');
     }
 
     return (

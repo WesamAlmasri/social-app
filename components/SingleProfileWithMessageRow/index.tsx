@@ -14,9 +14,8 @@ export type SingleProfileWithMessageRowProps = {
 const SingleProfileWithMessageRow = ({ profileWithMessage }: SingleProfileWithMessageRowProps) => {
 
     const navigation = useNavigation();
-
     const onPressConversation = () => {
-        navigation.navigate('ConversationScreen', {receiverId: profileWithMessage.id});
+        navigation.navigate('ConversationScreen', {receiverUsername: profileWithMessage.user?.username});
     }
 
     return (

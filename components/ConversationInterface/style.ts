@@ -6,6 +6,9 @@ const styles = StyleSheet.create({
       flex: 1,
       padding: 15
   },
+  noChatText: {
+    fontSize: 20
+  }
 });
 
 export default styles;
