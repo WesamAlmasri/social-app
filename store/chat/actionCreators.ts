@@ -53,7 +53,7 @@ import {
 } from './types';
 
 // Active chat
-export const updateActiveChat = (message: MessageType) => {
+export const updateActiveChat = (message: MessageType | null) => {
   const action: ActiveChatActionType = {
     type: actionTypes.ACTIVE_CHAT,
     payload: message,

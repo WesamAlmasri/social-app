@@ -13,7 +13,7 @@ import Colors from '../constants/Colors';
 import { MessageType, ProfileType, UserFileType } from '../types';
 import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { MESSAGES_URL, PROFILE_URL } from '../urls';
-import { updateActiveChatUser } from '../store/chat/actionCreators';
+import { updateActiveChat, updateActiveChatUser } from '../store/chat/actionCreators';
 import { StoreStateType } from '../store/types';
 
 export type ConversationScreenProps = {
@@ -28,12 +28,13 @@ export default function ConversationScreen() {
   const [profile, setProfile] = useState<ProfileType<UserFileType>>();
   const route: RouteProp<{ params: { receiverUsername: ConversationScreenProps } }, 'params'> = useRoute();
   const dispatch = useDispatch();
-  const { user } = useSelector(mapStateToProps);
+  const { user, activeChat } = useSelector(mapStateToProps);
 
   const getProfile = async () => {
     setLoading(true);
     const tokenString = await getData(tokenName);
     if (!tokenString) {
+      dispatch(updateActiveChatUser(null));
       navigation.navigate('Login');
       return;
     }
@@ -62,6 +63,7 @@ export default function ConversationScreen() {
   const getConversation = async () => {
     const tokenString = await getData(tokenName);
     if (!tokenString) {
+      dispatch(updateActiveChatUser(null));
       navigation.navigate('Login');
       return;
     }
@@ -86,6 +88,7 @@ export default function ConversationScreen() {
   const handleSeenChat = async (messageId: string) => {
     const tokenString = await getData(tokenName);
     if (!tokenString) {
+      dispatch(updateActiveChatUser(null));
       navigation.navigate('Login');
       return;
     }
@@ -107,6 +110,7 @@ export default function ConversationScreen() {
   }
 
   const onBack = () => {
+    dispatch(updateActiveChatUser(null));
     navigation.goBack();
   }
 
@@ -120,13 +124,41 @@ export default function ConversationScreen() {
     }
   }, [profile])
 
+  // useEffect(() => {
+  //   chatConversation?.map(chat => {
+  //     if (chat.receiver_id === user?.id && chat.seen === false) {
+  //       handleSeenChat(chat.id);
+  //     }
+  //   })
+  // }, [chatConversation])
+
   useEffect(() => {
-    chatConversation?.map(chat => {
-      if(chat.receiver_id === user?.id){
-        handleSeenChat(chat.id);
-      }
-    })
-  }, [chatConversation])
+    if (activeChat) {
+      let exits: boolean = false;
+      chatConversation.map(chat => {
+        if(chat.id === activeChat.id){
+          exits = true;
+        }
+      })
+      if (activeChat?.sender_id === profile?.id && !exits) {
+        console.log('HHHHHH!!!!!!!!!!!!!!!!!!');
+        setChatConversation([...chatConversation, activeChat]);
+        // handleSeenChat(activeChat.id);
+      } //else if (activeChat.receiver_id === profile?.id && activeChat.seen === true) {
+      //   let newMessageId;
+      //   chatConversation.map((message, index) => {
+      //     if (message.id === activeChat.id) {
+      //       newMessageId = index;
+      //     }
+      //   });
+      //   if (newMessageId) {
+      //     chatConversation[newMessageId] = activeChat;
+      //   }
+      //   setChatConversation(chatConversation)
+      // }
+    }
+    dispatch(updateActiveChat(null))
+  }, [activeChat])
 
   useEffect(() => {
     if (error) {
@@ -135,7 +167,10 @@ export default function ConversationScreen() {
         error,
         [{
           text: 'Ok',
-          onPress: () => navigation.goBack()
+          onPress: () => {
+            dispatch(updateActiveChatUser(null));
+            navigation.goBack()
+          }
         }]
       );
     }
@@ -165,7 +200,8 @@ export default function ConversationScreen() {
 }
 
 const mapStateToProps = (state: StoreStateType) => ({
-  user: state.user.user
+  user: state.user.user,
+  activeChat: state.chat.activeChat.activeChat
 });
 
 const styles = StyleSheet.create({
