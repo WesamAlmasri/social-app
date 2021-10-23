@@ -24,7 +24,7 @@ export default function ConversationScreen() {
   const navigation = useNavigation();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null)
-  const [chatConversation, setChatConversation] = useState<MessageType[] | null>(null);
+  const [chatConversation, setChatConversation] = useState<MessageType[]>([]);
   const [profile, setProfile] = useState<ProfileType<UserFileType>>();
   const route: RouteProp<{ params: { receiverUsername: ConversationScreenProps } }, 'params'> = useRoute();
   const dispatch = useDispatch();
@@ -77,8 +77,7 @@ export default function ConversationScreen() {
     });
 
     if (response) {
-      console.log('CHAT : ', response.data.results, user?.id);
-      setChatConversation(response.data.results);
+      setChatConversation(response.data.results.reverse());
     } else {
       setError('Error occurred!');
     }
@@ -160,7 +159,7 @@ export default function ConversationScreen() {
         <ConversationHeader profile={profile} />
       </View>
       <ConversationInterface conversation={chatConversation} />
-      <SendMessageBar receiverId={profile?.id ? profile?.id : ''} />
+      <SendMessageBar addChatToConversation={(message: MessageType) => setChatConversation(prev => [...prev, message])} receiverId={profile?.id ? profile?.id : ''} />
     </SafeAreaView>
   );
 }
