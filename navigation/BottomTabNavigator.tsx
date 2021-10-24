@@ -174,8 +174,9 @@ export function ProfileNavigator() {
     <ProfileStack.Navigator>
       <ProfileStack.Screen
         name="ProfileScreen"
-        // component={() => ProfileScreen({profile: meProfile, meProfile: true})}
-        children={ProfileScreen}
+        component={ProfileScreen}
+        // children={ProfileScreen}
+        // initialParams={{profileName: userProfile.user?.user?.username}}
         options={{ headerTitle: 'Profile', headerShown: false }}
       />
       <ProfileStack.Screen
@@ -195,7 +196,7 @@ function SearchNavigator() {
       <SearchStack.Screen
         name="SearchScreen"
         component={SearchScreen}
-        options={{ headerTitle: 'Search' }}
+        options={{ headerTitle: 'Search', headerLeft: () => null }}
       />
     </SearchStack.Navigator>
   );
@@ -209,7 +210,7 @@ function NotificationsNavigator() {
       <NotificationsStack.Screen
         name="NotificationsScreen"
         component={NotificationsScreen}
-        options={{ headerTitle: 'Notifications' }}
+        options={{ headerTitle: 'Notifications', headerLeft: () => null }}
       />
     </NotificationsStack.Navigator>
   );
@@ -223,7 +224,7 @@ function MessagesNavigator() {
       <MessagesStack.Screen
         name="MessagesScreen"
         component={MessagesScreen}
-        options={{ headerTitle: 'Messages' }}
+        options={{ headerTitle: 'Messages', headerLeft: () => null }}
       />
       <MessagesStack.Screen
         name="ConversationScreen"

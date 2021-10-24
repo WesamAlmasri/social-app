@@ -5,10 +5,14 @@
 
 export type RootStackParamList = {
   authController: undefined;
+  socketService: undefined;
   VerificationCode: undefined;
   Login: undefined;
   Register: undefined;
   Main: undefined;
+  MyProfile: {
+    meProfile: boolean,
+  };
   SingleProfile: undefined;
   SinglePost: undefined;
   Conversation: undefined;
@@ -30,7 +34,9 @@ export type HomeNavigatorParamList = {
 };
 
 export type ProfileNavigatorParamList = {
-  ProfileScreen: undefined;
+  ProfileScreen: {
+    profileName: string
+  };
   EditProfileScreen: undefined;
 };
 

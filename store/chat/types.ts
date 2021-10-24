@@ -6,7 +6,7 @@ export type ActiveChatStateType = {
 
 export type ActiveChatActionType = {
   type: string;
-  payload: MessageType;
+  payload: MessageType | null;
 };
 
 export type ActiveChatUserStateType = {

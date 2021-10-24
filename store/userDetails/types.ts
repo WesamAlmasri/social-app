@@ -1,7 +1,8 @@
-import { ProfileType, UserFileType, UserType } from '../../types';
+import { ProfileType, UserFileType } from '../../types';
 
 export type UserDetailsStateType = {
   user: ProfileType<UserFileType> | null;
+  otherProfileUsername: ProfileType<UserFileType> | null;
   otherProfile: ProfileType<UserFileType> | null;
 };
 

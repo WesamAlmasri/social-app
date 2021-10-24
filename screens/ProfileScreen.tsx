@@ -6,9 +6,9 @@ import ProfileInfo from '../components/ProfileInfo';
 import ProfileOptions from '../components/ProfileOptions';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { ProfileType, UserFileType } from '../types';
+import { useIsFocused } from "@react-navigation/native";
 
 
-// Dummy Data
 import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
@@ -18,7 +18,7 @@ import { axiosHandler, getData, tokenName, tokenType } from '../helper';
 import { PROFILE_POSTS_URL, PROFILE_URL } from '../urls';
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePostsList } from '../store/posts/actionCreators';
-import { updateOtherProfileDetails } from '../store/userDetails/actionCreators';
+import { updateOtherProfileDetails, updateOtherProfileUsername } from '../store/userDetails/actionCreators';
 import NewPostRow from '../components/NewPostRow';
 
 export type ProfileScreenProps = {
@@ -28,6 +28,7 @@ export type ProfileScreenProps = {
 export type ProfileScreenRouteProp = {
   params: {
     profileName: string
+    meProfile: boolean
   }
 }
 
@@ -44,9 +45,8 @@ export default function ProfileScreen() {
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { user, posts, profile } = useSelector(mapStateToProps);
-
-  const route = useRoute<RouteProp<ProfileScreenRouteProp, 'params'>>();
+  const isFocused = useIsFocused();
+  const { user, posts, profile, profileUsername } = useSelector(mapStateToProps);
 
   const getProfileData = async (profileName: string | undefined) => {
     const tokenString = await getData(tokenName);
@@ -66,6 +66,7 @@ export default function ProfileScreen() {
 
     if (response) {
       dispatch(updateOtherProfileDetails(response.data));
+      dispatch(updateOtherProfileUsername(null));
     } else {
       setError('Error occurred!');
     }
@@ -99,18 +100,20 @@ export default function ProfileScreen() {
   }
 
   useEffect(() => {
+    dispatch(updateOtherProfileDetails(null));
+    dispatch(updatePostsList([]));
     (
       async () => {
-        dispatch(updateOtherProfileDetails(null));
-        dispatch(updatePostsList([]));
-        if (!route.params?.profileName) {
-          await getProfileData(user?.user?.username);
-        } else {
-          await getProfileData(route.params?.profileName);
+        if (isFocused) {
+          if (profileUsername?.user?.username) {
+            await getProfileData(profileUsername?.user?.username);
+          } else {
+            await getProfileData(user?.user?.username);
+          }
         }
       }
     )();
-  }, [])
+  }, [isFocused])
 
   useEffect(() => {
     if (profile) {
@@ -130,6 +133,7 @@ export default function ProfileScreen() {
       );
     }
   }, [error]);
+
 
   if (!profile) {
     return (
@@ -151,8 +155,8 @@ export default function ProfileScreen() {
             <ProfileTopPart profile={profile} meProfile={profile?.id === user?.id} />
             {
               posts.length === 0 && <>
-                <NewPostRow />
-                <Text>No posts available</Text>
+                {/* <NewPostRow /> */}
+                <Text style={{ paddingLeft:10, fontSize: 25}}>No posts available</Text>
               </>
             }
           </>
@@ -198,7 +202,8 @@ const ProfileBackHeader = ({ }: ProfileBackHeaderProps) => {
 const mapStateToProps = (state: StoreStateType) => ({
   posts: state.posts.posts,
   user: state.user.user,
-  profile: state.user.otherProfile
+  profile: state.user.otherProfile,
+  profileUsername: state.user.otherProfileUsername
 });
 
 

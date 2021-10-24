@@ -13,7 +13,7 @@ let notificationsSocket;
 const SocketService = () => {
 
     const dispatch = useDispatch();
-    const { user } = useSelector(mapStateToProps);
+    const { user, activeChatUser } = useSelector(mapStateToProps);
 
     const setupSocket = () => {
         if(!user)return;
@@ -23,9 +23,9 @@ const SocketService = () => {
         messagesSocket.emit('join', {user_id: user.id});
         messagesSocket.on('message', (data) => {
             console.log('received message : ', data);
-            if (user.id === data.receiver_id || user.id === data.sender_id){
+            if (user.id === data.receiver_id /*|| user.id === data.sender_id */){
                 dispatch(updateActiveChat(data));
-                if((user.id === data.receiver_id) && (data.seen === false)){
+                if((user.id === data.receiver_id) && (data.sender_id !== activeChatUser?.id)){
                     // Send notification
                 }
             } else {return;}
@@ -44,11 +44,11 @@ const SocketService = () => {
 
     useEffect(setupSocket, [user]);
 
-    return <></>;
+    return null;
 };
 
 const mapStateToProps = (state: StoreStateType)  => ({
-    activeChatUser: state.chat.activeChatUser,
+    activeChatUser: state.chat.activeChatUser.activeChatUser,
     user: state.user.user
 })
 
