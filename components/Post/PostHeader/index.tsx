@@ -13,6 +13,7 @@ import { POST_URL } from '../../../urls';
 import { StoreStateType } from '../../../store/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePost } from '../../../store/posts/actionCreators';
+import { updateOtherProfileUsername } from '../../../store/userDetails/actionCreators';
 
 export type PostHeaderProps = {
     post: PostType,
@@ -57,7 +58,17 @@ const PostHeader = ({ post,single }: PostHeaderProps) => {
 
     const onPressProfile = () => {
         if(post.profile.user?.username === userProfile.user?.user?.username) return;
-        navigation.navigate('SingleProfile', { profileName: post.profile.user?.username });
+        dispatch(updateOtherProfileUsername({
+            id: '',
+            first_name: '',
+            last_name: '',
+            user: {
+                id: '',
+                email: '',
+                username: post.profile.user?.username ? post.profile.user?.username : ''
+            }
+        }));
+        navigation.navigate('SingleProfile');
     }
 
     useEffect(() => {

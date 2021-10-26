@@ -8,6 +8,7 @@ import store from './store'
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
+import SocketService from './socketService';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -19,6 +20,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <Provider store={store}>
+          <SocketService />
           <Navigation colorScheme={colorScheme} />
           <StatusBar />
         </Provider>

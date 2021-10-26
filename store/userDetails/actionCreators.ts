@@ -11,6 +11,15 @@ export const updateUserDetails = (userDetails: ProfileType<UserFileType>) => {
   return action;
 };
 
+export const updateOtherProfileUsername = (profileUsername: ProfileType<UserFileType> | null) => {
+  const action: UserDetailsActionType = {
+    type: actionTypes.UPDATE_OTHER_PROFILE_USERNAME,
+    payload: profileUsername,
+  };
+
+  return action;
+};
+
 export const updateOtherProfileDetails = (profileDetails: ProfileType<UserFileType> | null) => {
   const action: UserDetailsActionType = {
     type: actionTypes.UPDATE_OTHER_PROFILE_DETAILS,
@@ -19,4 +28,3 @@ export const updateOtherProfileDetails = (profileDetails: ProfileType<UserFileTy
 
   return action;
 };
-

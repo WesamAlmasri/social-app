@@ -5,6 +5,8 @@ import { ProfileWithMessageType, UserFileType } from '../../types';
 import ProfilePicture from '../ProfilePicture';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import { useDispatch } from 'react-redux';
+import { updateActiveChatUser } from '../../store/chat/actionCreators';
 
 
 export type SingleProfileWithMessageRowProps = {
@@ -12,11 +14,11 @@ export type SingleProfileWithMessageRowProps = {
 }
 
 const SingleProfileWithMessageRow = ({ profileWithMessage }: SingleProfileWithMessageRowProps) => {
-
+    const dispatch = useDispatch();
     const navigation = useNavigation();
-
     const onPressConversation = () => {
-        navigation.navigate('ConversationScreen', {receiverId: profileWithMessage.id});
+        dispatch(updateActiveChatUser(profileWithMessage));
+        navigation.navigate('ConversationScreen', {receiverUsername: profileWithMessage.user?.username});
     }
 
     return (

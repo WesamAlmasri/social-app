@@ -4,6 +4,8 @@ import styles from './style';
 import { ProfileType, UserFileType } from '../../types';
 import ProfilePicture from '../ProfilePicture';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { updateOtherProfileUsername } from '../../store/userDetails/actionCreators';
 
 
 export type SingleProfileRowProps = {
@@ -13,9 +15,11 @@ export type SingleProfileRowProps = {
 const SingleProfileRow = ({ profile }: SingleProfileRowProps) => {
 
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     const onPressProfile = () => {
-        navigation.navigate('SingleProfile', {profileId: profile.id});
+        dispatch(updateOtherProfileUsername(profile));
+        navigation.navigate('SingleProfile');
     }
 
     return (

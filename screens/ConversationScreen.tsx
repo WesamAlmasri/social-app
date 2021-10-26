@@ -1,25 +1,187 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import * as React from 'react';
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import { RouteProp, useRoute } from '@react-navigation/core';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import ConversationHeader from '../components/ConversationHeader';
 import ConversationInterface from '../components/ConversationInterface';
 import SendMessageBar from '../components/SendMessageBar';
 import Colors from '../constants/Colors';
 
 // Dummy Data
-import chatConversation from '../data/chatConversation';
-import profiles from '../data/profiles';
+import { MessageType, ProfileType, UserFileType } from '../types';
+import { axiosHandler, getData, tokenName, tokenType } from '../helper';
+import { MESSAGES_URL, PROFILE_URL } from '../urls';
+import { updateActiveChat, updateActiveChatUser } from '../store/chat/actionCreators';
+import { StoreStateType } from '../store/types';
 
 export type ConversationScreenProps = {
-  receiverId: string
+
 }
 
-export default function ConversationScreen({ receiverId }: ConversationScreenProps) {
+export default function ConversationScreen() {
   const navigation = useNavigation();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null)
+  const [chatConversation, setChatConversation] = useState<MessageType[]>([]);
+  const [profile, setProfile] = useState<ProfileType<UserFileType>>();
+  const route: RouteProp<{ params: { receiverUsername: ConversationScreenProps } }, 'params'> = useRoute();
+  const dispatch = useDispatch();
+  const { user, activeChat } = useSelector(mapStateToProps);
+
+  const getProfile = async () => {
+    setLoading(true);
+    const tokenString = await getData(tokenName);
+    if (!tokenString) {
+      dispatch(updateActiveChatUser(null));
+      navigation.navigate('Login');
+      return;
+    }
+    const token: tokenType = JSON.parse(tokenString);
+
+    let url = `${PROFILE_URL}/${route.params.receiverUsername}`;
+
+    const response = await axiosHandler({
+      url: url,
+      method: 'GET',
+      token: token.access_token,
+    })?.catch(e => {
+      setError(e.message);
+    });
+
+    if (response) {
+      setProfile(response.data);
+      dispatch(updateActiveChatUser(response.data));
+    } else {
+      setError('Error occurred!');
+    }
+
+    setLoading(false);
+  }
+
+  const getConversation = async () => {
+    const tokenString = await getData(tokenName);
+    if (!tokenString) {
+      dispatch(updateActiveChatUser(null));
+      navigation.navigate('Login');
+      return;
+    }
+    const token: tokenType = JSON.parse(tokenString);
+
+
+    const response = await axiosHandler({
+      url: `${MESSAGES_URL}/${profile?.id}`,
+      method: 'GET',
+      token: token.access_token,
+    })?.catch(e => {
+      setError(e.message);
+    });
+
+    if (response) {
+      setChatConversation(response.data.results.reverse());
+    } else {
+      setError('Error occurred!');
+    }
+  }
+
+  const handleSeenChat = async (messageId: string) => {
+    const tokenString = await getData(tokenName);
+    if (!tokenString) {
+      dispatch(updateActiveChatUser(null));
+      navigation.navigate('Login');
+      return;
+    }
+    const token: tokenType = JSON.parse(tokenString);
+
+    const response = await axiosHandler({
+      url: `${MESSAGES_URL}/${messageId}`,
+      method: 'PUT',
+      token: token.access_token,
+    })?.catch(e => {
+      setError(e.message);
+    });
+
+    if (response) {
+
+    } else {
+      setError('Error occurred!');
+    }
+  }
 
   const onBack = () => {
+    dispatch(updateActiveChatUser(null));
     navigation.goBack();
+  }
+
+  useEffect(() => {
+    getProfile();
+  }, [])
+
+  useEffect(() => {
+    if (profile) {
+      getConversation();
+    }
+  }, [profile])
+
+  // useEffect(() => {
+  //   chatConversation?.map(chat => {
+  //     if (chat.receiver_id === user?.id && chat.seen === false) {
+  //       handleSeenChat(chat.id);
+  //     }
+  //   })
+  // }, [chatConversation])
+
+  useEffect(() => {
+    if (activeChat) {
+      let exits: boolean = false;
+      chatConversation.map(chat => {
+        if(chat.id === activeChat.id){
+          exits = true;
+        }
+      })
+      if (activeChat?.sender_id === profile?.id && !exits) {
+        console.log('HHHHHH!!!!!!!!!!!!!!!!!!');
+        setChatConversation([...chatConversation, activeChat]);
+        // handleSeenChat(activeChat.id);
+      } //else if (activeChat.receiver_id === profile?.id && activeChat.seen === true) {
+      //   let newMessageId;
+      //   chatConversation.map((message, index) => {
+      //     if (message.id === activeChat.id) {
+      //       newMessageId = index;
+      //     }
+      //   });
+      //   if (newMessageId) {
+      //     chatConversation[newMessageId] = activeChat;
+      //   }
+      //   setChatConversation(chatConversation)
+      // }
+    }
+    dispatch(updateActiveChat(null))
+  }, [activeChat])
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert(
+        'Error',
+        error,
+        [{
+          text: 'Ok',
+          onPress: () => {
+            dispatch(updateActiveChatUser(null));
+            navigation.goBack()
+          }
+        }]
+      );
+    }
+  }, [error]);
+
+  if (loading || !profile) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="green" />
+      </View>
+    )
   }
 
   return (
@@ -29,13 +191,18 @@ export default function ConversationScreen({ receiverId }: ConversationScreenPro
           <Ionicons color={Colors.light.tabIconSelected} size={30} name='md-chevron-back' />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Back</Text>
-        <ConversationHeader profile={profiles[0]} />
+        <ConversationHeader profile={profile} />
       </View>
       <ConversationInterface conversation={chatConversation} />
-      <SendMessageBar receiverId={receiverId} />
+      <SendMessageBar addChatToConversation={(message: MessageType) => setChatConversation(prev => [...prev, message])} receiverId={profile?.id ? profile?.id : ''} />
     </SafeAreaView>
   );
 }
+
+const mapStateToProps = (state: StoreStateType) => ({
+  user: state.user.user,
+  activeChat: state.chat.activeChat.activeChat
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -53,6 +220,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     position: 'absolute',
     left: '50%',
-    transform: [{translateX: -10}]
+    transform: [{ translateX: -10 }]
   },
 });

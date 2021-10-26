@@ -11,6 +11,7 @@ import { COMMENT_URL } from "../../urls";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteComment } from "../../store/comments/actionCreators";
 import { StoreStateType } from "../../store/types";
+import { updateOtherProfileUsername } from "../../store/userDetails/actionCreators";
 
 export type CommentProps = {
     comment: CommentType,
@@ -48,8 +49,18 @@ const Comment = ({ comment, postId }: CommentProps) => {
     }
 
     const onPressProfile = () => {
-        if(comment.profile.id === user?.id) return;
-        navigation.navigate('SingleProfile', { profileId: comment.profile.id });
+        // if(comment.profile.id === user?.id) return;
+        // dispatch(updateOtherProfileUsername({
+        //     id: comment.profile?.user?.id ? comment.profile?.user?.id : '',
+        //     first_name: '',
+        //     last_name: '',
+        //     user: {
+        //         id: '',
+        //         email: '',
+        //         username: ''
+        //     }
+        // }));
+        // navigation.navigate('SingleProfile');
     }
 
     useEffect(() => {
