@@ -46,7 +46,6 @@ function RootNavigator() {
       <Stack.Screen name="VerificationCode" component={VerificationCodeScreen} />
       <Stack.Screen name="Main" component={BottomTabNavigator} />
       <Stack.Screen name="SingleProfile" component={ProfileScreen} />
-      <Stack.Screen name="SinglePost" component={SinglePostScreen} />
       {/* <Stack.Screen name="Conversation" component={ConversationScreen} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>

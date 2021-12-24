@@ -16,7 +16,7 @@ const SingleNotificationRow = ({ notification }: SingleNotificationRowProps) => 
     const navigation = useNavigation();
 
     const onPressNotification = () => {
-        navigation.navigate('SinglePost', {postId: notification.post_id});
+        navigation.navigate('SinglePost', { postId: notification.post_id });
     }
     
 

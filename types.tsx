@@ -47,6 +47,7 @@ export type SearchNavigatorParamList = {
 
 export type NotificationsNavigatorParamList = {
   NotificationsScreen: undefined;
+  SinglePost: undefined;
 }
 
 export type MessagesNavigatorParamList = {
