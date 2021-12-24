@@ -156,7 +156,7 @@ export default function ProfileScreen() {
             {
               posts.length === 0 && <>
                 {/* <NewPostRow /> */}
-                <Text style={{ paddingLeft:10, fontSize: 25}}>No posts available</Text>
+                {/* <Text style={{ paddingLeft:10, fontSize: 25}}>No posts available</Text> */}
               </>
             }
           </>

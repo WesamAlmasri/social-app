@@ -212,6 +212,14 @@ function NotificationsNavigator() {
         component={NotificationsScreen}
         options={{ headerTitle: 'Notifications', headerLeft: () => null }}
       />
+      <NotificationsStack.Screen
+        name="SinglePost"
+        component={SinglePostScreen}
+        options={{
+          headerShown: false,
+          headerTitle: "Post",
+        }}
+      />
     </NotificationsStack.Navigator>
   );
 }
